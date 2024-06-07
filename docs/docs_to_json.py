@@ -54,8 +54,7 @@ for function_category in raw_tree:
                                         [str(x) for x in arg_default])
                         argname = arg[0].split(" ")[0]
                         if arg_default is not None:
-                            argname = f'{argname} (default: {
-                                arg_default})'
+                            argname = f'{argname} (default: {arg_default})'
                         func_args.append({"name": argname})
         formatted_tree.append({
             "name": func_name,
@@ -63,5 +62,5 @@ for function_category in raw_tree:
             "args": func_args
         })
 formatted_tree.sort(key=lambda x: x["name"])
-with open("../src/data/bellplay.json", "w") as f:
+with open("../src/bellplay.json", "w") as f:
     json.dump(formatted_tree, f, indent=4)
