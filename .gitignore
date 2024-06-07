@@ -1,5 +1,9 @@
 node_modules
+**/__pycache__
 *.vsix
+out/*
+src/bellplay.json
+**/*.txt
 **/*.js
 **/*.js.map
 **/.DS_Store

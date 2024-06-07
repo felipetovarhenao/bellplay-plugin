@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import bellplay from "./data/bellplay.json";
+import bellplay from "./bellplay.json";
 
 const bellplayRefLookup: any = {};
 

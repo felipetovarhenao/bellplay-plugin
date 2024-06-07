@@ -12,6 +12,9 @@
   "engines": {
     "vscode": "^1.87.0"
   },
+  "activationEvents": [
+    "onLanguage:bell"
+  ],
   "categories": [
     "Programming Languages"
   ],
