@@ -17,6 +17,7 @@ formatted_tree = []
 # for each function category (generators, utils, processors, etc)
 for function_category in raw_tree:
     functions = function_category[1:]
+    
     # for each function in current category
     for function in functions:
         func_name = function[0]
@@ -61,5 +62,6 @@ for function_category in raw_tree:
             "description": func_descr,
             "args": func_args
         })
+formatted_tree.sort(key=lambda x: x["name"])
 with open("../src/data/bellplay.json", "w") as f:
     json.dump(formatted_tree, f, indent=4)
