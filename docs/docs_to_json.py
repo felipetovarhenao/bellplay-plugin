@@ -2,7 +2,7 @@ import json
 from tree_parser import TreeParser
 import os
 
-file = "./docs.txt"
+file = "./bellplay_docs.txt"
 path = os.path.abspath(file)
 
 if not os.path.exists(path):

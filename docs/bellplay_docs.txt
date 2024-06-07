@@ -1,0 +1,5559 @@
+	[ utilities
+		[ readfolder
+			[ description: "Returns a list of file paths in specified folder directory." ]
+			[ arguments:
+				[ required:
+					[ "@path ?"
+						[ description: "folder path." ]
+						[ type: symbol ]
+					]
+				]
+				[ optional:
+					[ @filetype
+						[ description: "file type." ]
+						[ type: symbol ]
+						[ default: 'audio' ]
+						[ options:
+							[ 'audio': audio files ]
+							[ 'midi': midi files ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "list of file paths" ]
+				[ type: list ]
+			]
+		]
+		[ inspect
+			[ description: "Opens buffer inspector window, displaying relevant buffer information — useful for debugging." ]
+			[ arguments:
+				[ required:
+					[ "@buffer ?"
+						[ description: "media file type." ]
+						[ type: llll ]
+					]
+				]
+				[ optional:
+					[ @label
+						[ description: "optional buffer inspector label." ]
+						[ type: symbol/null ]
+						[ default: null ]
+					]
+				]
+			]
+			[ output:
+				[ description: buffer ]
+				[ type: llll ]
+			]
+		]
+		[ getmediafiles
+			[ description: "Returns a list of included media files in bellplay~." ]
+			[ arguments:
+				[ optional:
+					[ @type
+						[ description: "media file type" ]
+						[ type: symbol/null ]
+						[ default: null ]
+						[ options:
+							[ null: all files ]
+							[ 'audio': audio files ]
+							[ 'midi': midi files ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "list of media files" ]
+				[ type: list ]
+			]
+		]
+		[ tosymbol
+			[ description: "Casts input value as a symbol." ]
+			[ arguments:
+				[ required:
+					[ "@x ?"
+						[ description: "value to cast" ]
+						[ type: anything ]
+					]
+				]
+			]
+			[ output:
+				[ description: symbol ]
+				[ type: symbol ]
+			]
+		]
+		[ isnan
+			[ description: "Checks if the input argument is strictly a nan — i.e., 'not a number' — value." ]
+			[ arguments:
+				[ required:
+					[ "@x ?"
+						[ description: "value to check" ]
+						[ type: anything ]
+					]
+				]
+			]
+			[ output:
+				[ description: "0 if false, 1 if true." ]
+				[ type: int ]
+			]
+		]
+		[ addmarker
+			[ description: "Inserts a marker into the transcription score, given an onset time and, optionally, a list of names associated with that marker, as a list." ]
+			[ arguments:
+				[ required:
+					[ "@onset ?"
+						[ description: "marker onset position." ]
+						[ type: int/float ]
+					]
+				]
+				[ optional:
+					[ @names
+						[ description: "optional list of marker names, each as a symbol" ]
+						[ type: symbol/list/null ]
+						[ default: null ]
+					]
+				]
+			]
+			[ output: null ]
+		]
+		[ pcdiff
+			[ description: "Signed pitch class difference." ]
+			[ arguments:
+				[ required:
+					[ "@a ?"
+						[ description: "pitch classes." ]
+						[ type: int/float/list ]
+					]
+					[ "@b ?"
+						[ description: "pitch classes." ]
+						[ type: int/float/list ]
+					]
+				]
+			]
+			[ output:
+				[ description: "signed difference" ]
+				[ type: int/float/list ]
+			]
+		]
+		[ buildcorpus
+			[ description: "Creates a buffer corpus from a list of audio file paths, and writes it into disk as a .llll file. See #analyze and #onsets." ]
+			[ arguments:
+				[ required:
+					[ "@files ?"
+						[ description: "list of audio file paths." ]
+						[ type: symbol/list ]
+					]
+					[ "@descriptors ?"
+						[ description: "list of audio descriptors." ]
+						[ type: llll ]
+					]
+				]
+				[ optional:
+					[ @outpath
+						[ description: "optional output corpus path, as an .llll file. If null, the corpus is not written into memory." ]
+						[ type: symbol/null ]
+						[ default: null ]
+					]
+					[ @segmode
+						[ description: "buffer segmentation mode." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: no segmentation ]
+							[ 1: 'onsets'-based segmentation ]
+							[ 2: blind segmentation ]
+						]
+					]
+					[ @overlap
+						[ description: "segment overlap factor, when @segmode is 2." ]
+						[ type: int/float ]
+						[ default: 1 ]
+					]
+					[ @segsize
+						[ description: "segment duration in milliseconds, when @segmode is 2." ]
+						[ type: int ]
+						[ default: 100 ]
+					]
+					[ @alpha
+						[ description: "proportion of the mean included to reject smaller peaks — filters very short onsets." ]
+						[ type: float ]
+						[ default: 0.1 ]
+					]
+					[ @delay
+						[ description: "number of frames used to compute the threshold — size of short-onset filter." ]
+						[ type: int ]
+						[ default: 5 ]
+					]
+					[ @framerate
+						[ description: "frames per second." ]
+						[ type: float ]
+						[ default: 86.1328 ]
+					]
+					[ @silencethreshold
+						[ description: "threshold for silence." ]
+						[ type: float ]
+						[ default: 0.02 ]
+					]
+				]
+			]
+			[ output: null ]
+		]
+		[ setcorpus
+			[ description: "Loads an audio corpus, given an absolute path to a .llll file. See #query function." ]
+			[ arguments:
+				[ required:
+					[ "@filepath ?"
+						[ description: "file path to .llll corpus file." ]
+						[ type: symbol ]
+					]
+				]
+			]
+			[ output: null ]
+		]
+		[ getcorpuskeys
+			[ description: "Returns a list with the current corpus' keys. See #setcorpus, #buildcorpus, and #query." ]
+			[ arguments:
+				[ optional:
+					[ @typed
+						[ description: "include the data type for each key." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "corpus keys" ]
+				[ type: list/llll ]
+			]
+		]
+		[ samplelist
+			[ description: "Samples an interpolated value from a numeric list given a normalized index." ]
+			[ arguments:
+				[ required:
+					[ "@x ?"
+						[ description: "list to sample from." ]
+						[ type: list ]
+					]
+					[ "@i ?"
+						[ description: "normalized sampling index." ]
+						[ type: list ]
+					]
+				]
+			]
+			[ output:
+				[ description: "interpolated sample" ]
+				[ type: int/float/list ]
+			]
+		]
+		[ median
+			[ description: "Returns the median element of a numeric list." ]
+			[ arguments:
+				[ required:
+					[ "@x ?"
+						[ description: "numeric list." ]
+						[ type: list ]
+					]
+				]
+			]
+			[ output:
+				[ description: "median element" ]
+				[ type: int/float ]
+			]
+		]
+		[ mean
+			[ description: "Returns the mean value of a numeric list." ]
+			[ arguments:
+				[ required:
+					[ "@x ?"
+						[ description: "numeric list." ]
+						[ type: list ]
+					]
+				]
+				[ optional:
+					[ @weights
+						[ description: "optional weights." ]
+						[ type: list/null ]
+						[ default: null ]
+					]
+				]
+			]
+			[ output:
+				[ description: "mean value" ]
+				[ type: float ]
+			]
+		]
+		[ query
+			[ description: "Executes a #sqlite3 query on the current audio corpus, and returns the results. Every query should use 'buffers' as the table name. For instance: 'SELECT * FROM buffers'. See #setcorpus." ]
+			[ arguments:
+				[ optional:
+					[ @query
+						[ description: "sqlite3 query." ]
+						[ type: symbol ]
+						[ default: "'SELECT * FROM buffers'" ]
+					]
+				]
+			]
+			[ output:
+				[ description: "list of buffers" ]
+				[ type: llll ]
+			]
+		]
+		[ getkey
+			[ description: "Returns value associated with a buffer's key." ]
+			[ arguments:
+				[ required:
+					[ "@buffer ?"
+						[ description: buffer. ]
+						[ type: llll ]
+					]
+					[ "@key ?"
+						[ description: "name of buffer key." ]
+						[ type: symbol ]
+						[ options:
+							[ 'duration' ]
+							[ 'numchannels' ]
+							[ 'offset' ]
+							[ 'pitch' ]
+							[ 'source' ]
+							[ 'source_end' ]
+							[ 'sr' ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "value associated with key" ]
+				[ type: anything ]
+			]
+		]
+		[ setkey
+			[ description: "Modifies the key of a buffer." ]
+			[ arguments:
+				[ required:
+					[ "@buffer ?"
+						[ description: "buffer to modify." ]
+						[ type: llll ]
+					]
+					[ "@key ?"
+						[ description: "name of buffer key." ]
+						[ type: symbol ]
+						[ options:
+							[ 'duration' ]
+							[ 'numchannels' ]
+							[ 'offset' ]
+							[ 'pitch' ]
+							[ 'source' ]
+							[ 'source_end' ]
+							[ 'sr' ]
+						]
+					]
+					[ "@val ?"
+						[ description: "new value for buffer key." ]
+						[ type: anything ]
+					]
+				]
+			]
+			[ output:
+				[ description: "modified buffer" ]
+				[ type: llll ]
+			]
+		]
+		[ mapkey
+			[ description: "Modifies the key of a buffer via a lambda function." ]
+			[ arguments:
+				[ required:
+					[ "@buffer ?"
+						[ description: "buffer to modify." ]
+						[ type: llll ]
+					]
+					[ "@key ?"
+						[ description: "name of buffer key." ]
+						[ type: symbol ]
+						[ options:
+							[ 'duration' ]
+							[ 'numchannels' ]
+							[ 'offset' ]
+							[ 'pitch' ]
+							[ 'source' ]
+							[ 'source_end' ]
+							[ 'sr' ]
+						]
+					]
+					[ "@func ?"
+						[ description: "lambda function with signature $currentvalue, $currentbuffer -> $newvalue." ]
+						[ type: "lambda function" ]
+					]
+				]
+			]
+			[ output:
+				[ description: "modified buffer" ]
+				[ type: llll ]
+			]
+		]
+		[ bpf
+			[ description: `Formats\ an\ numeric\ list\ into\ a\ breakpoint\ function\,\ in\ the\ form\ of\ [<x>\ <y>\ <slope>]\ tuples.\ By\ default\,\ <x>\ is\ normalized\ to\ the\ 0-1\ range.\ To\ prevent\ this\,\ set\ @xfunc\ to\ null. ]
+			[ arguments:
+				[ required:
+					[ "@pts ?"
+						[ description: "numeric list" ]
+						[ type: list ]
+					]
+				]
+				[ optional:
+					[ @xfunc
+						[ description: "optional lambda function for x axis" ]
+						[ type: function/null ]
+						[ default: <normalization_function> ]
+					]
+					[ @yfunc
+						[ description: "optional lambda function for y axis" ]
+						[ type: function/null ]
+						[ default: null ]
+					]
+					[ @sfunc
+						[ description: "optional lambda function for bpf slope" ]
+						[ type: function/null ]
+						[ default: null ]
+					]
+				]
+			]
+			[ output:
+				[ description: "breakpoint function" ]
+				[ type: llll ]
+			]
+		]
+		[ x2dx
+			[ description: "Takes a list of numbers and returns the differences — i.e., deltas — between adjacent elements. Inverse of #dx2x." ]
+			[ arguments:
+				[ required:
+					[ "@x ?"
+						[ description: "list of numeric values." ]
+						[ type: list ]
+					]
+				]
+			]
+			[ output:
+				[ description: "difference between adjacent elements, as a list." ]
+				[ type: list ]
+			]
+		]
+		[ dx2x
+			[ description: "Takes a list of differences — i.e., deltas — and an optional starting value, and returns the cumulative sum between adjacent elements, as a list. Inverse of #x2dx." ]
+			[ arguments:
+				[ required:
+					[ "@dx ?"
+						[ description: "list of differences/deltas." ]
+						[ type: list ]
+					]
+				]
+				[ optional:
+					[ @st
+						[ description: "optional starting value." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "cumulative sum of differences from starting value." ]
+				[ type: list ]
+			]
+		]
+		[ r2dr
+			[ description: "Takes a list of ratios or factors and returns the quotients between adjacent elements. Inverse of #dr2r." ]
+			[ arguments:
+				[ required:
+					[ "@r ?"
+						[ description: "list of ratios." ]
+						[ type: list ]
+					]
+				]
+			]
+			[ output:
+				[ description: "list of quotients between adjacent elements" ]
+				[ type: list ]
+			]
+		]
+		[ dr2r
+			[ description: "Takes a list of ratios and an optional starting value, and returns the cumulative multiplication between adjacent elements, as a list. Inverse of #r2dr." ]
+			[ arguments:
+				[ required:
+					[ "@dr ?"
+						[ description: "list of ratios." ]
+						[ type: list ]
+					]
+				]
+				[ optional:
+					[ @st
+						[ description: "starting value" ]
+						[ type: int/float ]
+						[ default: 1 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "cumulative multiplication between adjacent elements." ]
+				[ type: list ]
+			]
+		]
+		[ revbpf
+			[ description: "Reverses a breakpoint function. See #bpf." ]
+			[ arguments:
+				[ required:
+					[ "@bpf ?"
+						[ description: "breakpoint function to reverse" ]
+						[ type: llll ]
+					]
+				]
+			]
+			[ output:
+				[ description: "breakpoint function" ]
+				[ type: llll ]
+			]
+		]
+		[ scale
+			[ description: "Scales an input value or list from a given range to another." ]
+			[ arguments:
+				[ required:
+					[ "@x ?"
+						[ description: "value to scale." ]
+						[ type: int/float/list ]
+					]
+				]
+				[ optional:
+					[ @inmin
+						[ description: "input minimum value." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+					[ @inmax
+						[ description: "input maxiumum value." ]
+						[ type: int/float ]
+						[ default: 1 ]
+					]
+					[ @outmin
+						[ description: "output minimum value." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+					[ @outmax
+						[ description: "output maxiumum value." ]
+						[ type: int/float ]
+						[ default: 1 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "scaled input" ]
+				[ type: int/float/list/llll ]
+			]
+		]
+		[ rand
+			[ description: "Random floating point number generator." ]
+			[ arguments:
+				[ required:
+					[ "@a ?"
+						[ description: "max. value if @b is null, else min. value." ]
+						[ type: int/float ]
+					]
+					[ "@b ?"
+						[ description: "min. value." ]
+						[ type: int/float ]
+					]
+				]
+				[ optional:
+					[ @res
+						[ description: "random value resolution." ]
+						[ type: int ]
+						[ default: 1000 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "random floating point number" ]
+				[ type: int/float ]
+			]
+		]
+		[ nearest
+			[ description: "Given a target number, finds the nearest value in a numeric list via binary search." ]
+			[ arguments:
+				[ required:
+					[ "@list ?"
+						[ description: "numeric list to search." ]
+						[ type: list ]
+					]
+					[ "@target ?"
+						[ description: "target number to find nearest value for." ]
+						[ type: int/float ]
+					]
+				]
+			]
+			[ output:
+				[ description: "nearest value" ]
+				[ type: int/float ]
+			]
+		]
+		[ choose
+			[ description: "Choose randomly one or more elements from a list, with optional probability weights." ]
+			[ arguments:
+				[ required:
+					[ "@choices ?"
+						[ description: "list to choose from." ]
+						[ type: list ]
+					]
+				]
+				[ optional:
+					[ @n
+						[ description: "number of random choices." ]
+						[ type: int ]
+						[ default: 1 ]
+					]
+					[ @weights
+						[ description: "optional probability weights for each element." ]
+						[ type: list/null ]
+						[ default: null ]
+					]
+				]
+			]
+			[ output:
+				[ description: "random choices" ]
+				[ type: anything ]
+			]
+		]
+		[ c2r
+			[ description: "Cents to ratio conversion." ]
+			[ arguments:
+				[ required:
+					[ "@cents ?"
+						[ description: "cents to convert." ]
+						[ type: list/int/float ]
+					]
+				]
+			]
+			[ output:
+				[ description: "list of ratios" ]
+				[ type: int/float/list ]
+			]
+		]
+		[ octreduce
+			[ description: "Reduces ratios to fit within the 1-2 range." ]
+			[ arguments:
+				[ required:
+					[ "@ratios ?"
+						[ description: "ratios to reduce." ]
+						[ type: list/int/rat/float ]
+					]
+				]
+			]
+			[ output:
+				[ description: "list of pitch classes" ]
+				[ type: list/int/float ]
+			]
+		]
+		[ r2pc
+			[ description: "Ratio to pitch class conversion, assuming octave equivalence." ]
+			[ arguments:
+				[ required:
+					[ "@ratios ?"
+						[ description: "ratios to convert." ]
+						[ type: list/int/float ]
+					]
+				]
+				[ optional:
+					[ @pc
+						[ description: "pitch class of fundamental" ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "list of pitch classes" ]
+				[ type: list/int/float ]
+			]
+		]
+		[ mc2pc
+			[ description: "midicent to pitch class conversion." ]
+			[ arguments:
+				[ required:
+					[ "@mc ?"
+						[ description: "midicents to convert." ]
+						[ type: list/int/float ]
+					]
+				]
+			]
+			[ output:
+				[ description: "list of pitch classes" ]
+				[ type: list/int/float ]
+			]
+		]
+		[ r2mc
+			[ description: "Ratio to midicent conversion." ]
+			[ arguments:
+				[ required:
+					[ "@ratios ?"
+						[ description: "ratios to convert." ]
+						[ type: list/int/float ]
+					]
+				]
+				[ optional:
+					[ @mc
+						[ description: "fundamental in midicents" ]
+						[ type: int/float ]
+						[ default: 6000 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "list of midicents" ]
+				[ type: list/int/float ]
+			]
+		]
+		[ r2c
+			[ description: "Ratio to cents conversion." ]
+			[ arguments:
+				[ required:
+					[ "@ratios ?"
+						[ description: "ratios to convert." ]
+						[ type: list/int/float ]
+					]
+				]
+			]
+			[ output:
+				[ description: "list of cents" ]
+				[ type: list/int/float ]
+			]
+		]
+		[ sortbykey
+			[ description: "Sorts llll items by a given key." ]
+			[ arguments:
+				[ required:
+					[ "@items ?"
+						[ description: "items to sort." ]
+						[ type: llll ]
+					]
+					[ "@key ?"
+						[ description: "key to sort by." ]
+						[ type: symbol ]
+					]
+				]
+			]
+			[ output:
+				[ description: "list of sorted items" ]
+				[ type: llll ]
+			]
+		]
+		[ pitchdiff
+			[ description: "Given a list of target midicents and/or pitch classes, returns the signed difference between a pitch in midicents and the nearest midicent/pitch class target." ]
+			[ arguments:
+				[ required:
+					[ "@pitch ?"
+						[ description: "reference pitch in midicents." ]
+						[ type: int/float ]
+					]
+					[ "@targets ?"
+						[ description: "list of midicent or pitch class targets." ]
+						[ type: int/float/list ]
+					]
+				]
+			]
+			[ output:
+				[ description: "signed difference to closest target, in cents." ]
+				[ type: int/float ]
+			]
+		]
+		[ transcribe
+			[ description: "Adds input buffer to the rendering sequence. See #setcorpus, #query, and #render functions." ]
+			[ arguments:
+				[ required:
+					[ "@buffer ?"
+						[ description: "buffer to add to rendering sequence." ]
+						[ type: llll ]
+					]
+				]
+				[ optional:
+					[ @onset
+						[ description: "buffer onset in milliseconds." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+					[ @pan
+						[ description: "normalized panning value or envelope." ]
+						[ type: int/float/list/llll ]
+						[ default: null ]
+					]
+					[ @gain
+						[ description: "gain value or envelope." ]
+						[ type: int/float/llll ]
+						[ default: null ]
+					]
+					[ @detune
+						[ description: "detuning amount in cents." ]
+						[ type: int/float ]
+						[ default: null ]
+					]
+					[ @voice
+						[ description: `voice\ assignment\ in\ score.\ See\ scoreconfig()\ function. ]
+						[ type: int ]
+						[ default: 1 ]
+					]
+				]
+			]
+			[ output: null ]
+		]
+		[ scoreconfig
+			[ description: "Configures the score appearance, such as the clefs, voice names, tone division, etc. See #transcribe." ]
+			[ arguments:
+				[ optional:
+					[ @voicenames
+						[ description: "voice names." ]
+						[ type: list/symbol ]
+						[ default: 'output' ]
+					]
+					[ @clefs
+						[ description: "clef type for each voice, as a symbol." ]
+						[ type: list/symbol ]
+						[ default: 'FFGG' ]
+						[ options:
+							[ 'G': treble clef ]
+							[ 'F': bass clef ]
+							[ 'FG': grand staff ]
+							[ 'FFGG': full staff ]
+							[ 'FGG': bass + treble clef ]
+							[ 'FFG': double bass + treble clef ]
+							[ 'FF': double bass clef ]
+							[ 'GG': double treble clef ]
+							[ 'G8va': 8va treble clef ]
+							[ 'G8vb': 8vb treble clef ]
+							[ 'G15ma': 15ma treble clef ]
+							[ 'G15mb': 15mb treble clef ]
+							[ 'F8va': 8va bass clef ]
+							[ 'F8vb': 8vb bass clef ]
+							[ 'F15ma': 15ma bass clef ]
+							[ 'F15mb': 15mb bass clef ]
+							[ 'Tenor': tenor clef ]
+							[ 'Barytone': baritone clef ]
+							[ 'Alto': alto clef ]
+							[ 'Mezzo': mezzo clef ]
+							[ 'Soprano': soprano clef ]
+							[ 'Percussion': percussion clef ]
+						]
+					]
+					[ @tonedivision
+						[ description: "symbolic tone division." ]
+						[ type: int ]
+						[ default: 8 ]
+						[ options:
+							[ 2: semitones ]
+							[ 4: quarter tones ]
+							[ 8: eighth tones ]
+						]
+					]
+					[ @showdurations
+						[ description: "show note durations as lines" ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @midichannels
+						[ description: "midichannel for each voice" ]
+						[ type: int/list ]
+						[ default: 1 ]
+					]
+				]
+			]
+			[ output: null ]
+		]
+		[ read
+			[ description: "Read .txt or native .llll data. The ignore attribute allows preventing some categories of symbols, such as parens, pitches and more, to be read according to the usual bell syntax." ]
+			[ arguments:
+				[ required:
+					[ "@path ?"
+						[ description: "input file path." ]
+						[ type: symbol ]
+					]
+				]
+				[ optional:
+					[ @ignore
+						[ description: "The ignore attribute can be set to any combination of the following characters" ]
+						[ type: symbol/null ]
+						[ default: null ]
+						[ options:
+							[
+								[ description: "parens inside symbols are not llll levels, but symbols composed by parens only are kept as llll levels!" ]
+								[ type: list ]
+							]
+							[
+								[ description: "all parens are not parsed as llll levels" ]
+								[ type: list ]
+							]
+							[
+								[ description: "ignore pitches, keep them as symbols" ]
+								[ type: list ]
+							]
+							[
+								[ description: "ignore rationals, keep them as symbols" ]
+								[ type: list ]
+							]
+							[
+								[ description: "ignore floating-point scientific notation, keep it as symbol" ]
+								[ type: list ]
+							]
+							[
+								[ description: "keep the special symbols nil and null as symbols" ]
+								[ type: list ]
+							]
+							[
+								[ description: "symbols with a backtick are interpreted literally, with the backtick included" ]
+								[ type: list ]
+							]
+							[
+								[ description: "don't ignore anything" ]
+								[ type: list ]
+							]
+							[
+								[ description: "ignore everything" ]
+								[ type: list ]
+							]
+							[
+								[ description: "invert selection" ]
+								[ type: list ]
+							]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "file content" ]
+				[ type: anything ]
+			]
+		]
+		[ write
+			[ description: "Writes data into disk in either .txt or native .llll format." ]
+			[ arguments:
+				[ required:
+					[ "@data ?"
+						[ description: "data to write." ]
+						[ type: anything ]
+					]
+					[ "@path ?"
+						[ description: "output file path." ]
+						[ type: symbol ]
+					]
+				]
+				[ optional:
+					[ @escape
+						[ description: "escaping style" ]
+						[ type: int ]
+						[ default: 3 ]
+						[ options:
+							[ 0: none ]
+							[ 1: backtick ]
+							[ 2: double quotes ]
+							[ 3: smart ]
+						]
+					]
+					[ @wrap
+						[ description: "column at which the text should be hard-wrapped in .txt format. 0 means no wrapping" ]
+						[ type: int ]
+						[ default: 0 ]
+					]
+					[ @indent
+						[ description: "if value is integer, number of spaces per depth level used for indentation." ]
+						[ type: symbol/int ]
+						[ default: 'tab' ]
+					]
+					[ @maxdecimals
+						[ description: "maximum number of decimal digits for .txt format." ]
+						[ type: int ]
+						[ default: 10 ]
+					]
+					[ @maxdepth
+						[ description: "maximum depth level at which text indentation is performed for .txt format." ]
+						[ type: int ]
+						[ default: -1 ]
+					]
+					[ @negativeoctaves
+						[ description: "use negative octaves, when in .txt format." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @parens
+						[ description: "use parens." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+				]
+			]
+			[ output: null ]
+		]
+		[ export
+			[ description: "Exports the rendered output as either a .wav, .mid/midi. or .llll file, given a output path. For .wav files, mono stem files can be separately exported. See #render function." ]
+			[ arguments:
+				[ required:
+					[ "@path ?"
+						[ description: "output file path." ]
+						[ type: symbol ]
+					]
+				]
+				[ optional:
+					[ @stems
+						[ description: "stem export mode for .wav files." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+				]
+			]
+			[ output: null ]
+		]
+		[ importmidi
+			[ description: "Imports a midi file, as a list of events, each with the following keys: 'pitch' , 'velocity', 'onset', 'voice', 'channel', and 'duration'" ]
+			[ arguments:
+				[ required:
+					[ "@path ?"
+						[ description: "input midi file path." ]
+						[ type: symbol ]
+					]
+				]
+			]
+			[ output:
+				[ description: "midi events" ]
+				[ type: llll ]
+			]
+		]
+		[ hanning
+			[ description: "Generates a hanning window as a numeric list." ]
+			[ arguments:
+				[ optional:
+					[ @length
+						[ description: "window length." ]
+						[ type: int ]
+						[ default: 16 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "hanning window" ]
+				[ type: list ]
+			]
+		]
+		[ interpolate
+			[ description: "Curve interpolation between two points." ]
+			[ arguments:
+				[ required:
+					[ "@x ?"
+						[ description: "interpolation point" ]
+						[ type: int/float/list ]
+					]
+					[ "@a ?"
+						[ description: "xy coordinates for point A" ]
+						[ type: list ]
+					]
+					[ "@b ?"
+						[ description: "xy coordinates for point B" ]
+						[ type: list ]
+					]
+				]
+				[ optional:
+					[ @slope
+						[ description: "slope of curve between the two points, in the -1 to 1 range" ]
+						[ type: list ]
+						[ default: 0 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "interpolated values" ]
+				[ type: int/float/list ]
+			]
+		]
+		[ samplebpf
+			[ description: "Samples an interpolated value from a breakpoint function, given a list of normalized indices. See #bpf function." ]
+			[ arguments:
+				[ required:
+					[ "@bpf ?"
+						[ description: "breakpoint function" ]
+						[ type: llll ]
+					]
+					[ "@pts ?"
+						[ description: "sampling point/s" ]
+						[ type: int/float/list ]
+					]
+				]
+			]
+			[ output:
+				[ description: "interpolated bpf values" ]
+				[ type: int/float/list ]
+			]
+		]
+		[ expand
+			[ description: "Modifies offset and duration of a buffer, such that it uses the full length of its reference buffer." ]
+			[ arguments:
+				[ required:
+					[ "@buffer ?"
+						[ description: "buffer to expand." ]
+						[ type: llll ]
+					]
+				]
+			]
+			[ output:
+				[ description: buffer ]
+				[ type: llll ]
+			]
+		]
+		[ buildtree
+			[ description: "Builds a k-dimensional tree on a set of buffers, given one or more buffer features. This tree can be queried via the #searchtree function. Note that there can only be one tree at a time." ]
+			[ arguments:
+				[ required:
+					[ "@buffers ?"
+						[ description: "list of buffers." ]
+						[ type: llll ]
+					]
+					[ "@keys ?"
+						[ description: "one or more features to build tree on, as a list of symbols." ]
+						[ type: list/symbol ]
+					]
+				]
+			]
+			[ output: null ]
+		]
+		[ searchtree
+			[ description: "k-nearest neighbor search on the current k-dimensional tree. The search input can be either a single buffer or, more directly, the values associated with the features the tree was based on. See #buildtree." ]
+			[ arguments:
+				[ required:
+					[ "@target ?"
+						[ description: "target buffer or feature value to find nearest neighbor for." ]
+						[ type: llll ]
+					]
+				]
+			]
+			[ output:
+				[ description: "nearest buffer" ]
+				[ type: llll ]
+			]
+		]
+	]
+	[ "audio processing"
+		[ render
+			[ description: `Triggers\ audio\ rendering\ of\ all\ transcribed\ buffers\ via\ #transcribe\,\ and\ returns\ the\ rendered\ buffer.\ Note\ that\ it\'s\ possible\ to\ apply\ post-rendering\ processing\ by\ passing\ audio\ processing\ commands\ (e.g.\,\ #reverse\,\ #freeverb\,\ #clip\,\ etc.)\ to\ the\ @process\ arguments\,\ but\ these\ audio\ modifications\ won\'t\ be\ accurately\ reflected\ in\ the\ score\ transcription.\ See\ #process\ function. ]
+			[ arguments:
+				[ optional:
+					[ @numchannels
+						[ description: "number of output channels." ]
+						[ type: int ]
+						[ default: 2 ]
+					]
+					[ @panmode
+						[ description: "panning mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: linear ]
+							[ 1: circular ]
+						]
+					]
+					[ @sr
+						[ description: "sampling rate." ]
+						[ type: int ]
+						[ default: 48000 ]
+					]
+					[ @normalize
+						[ description: "audio normalization." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: never ]
+							[ 1: always ]
+							[ 2: overload protection only ]
+						]
+					]
+					[ @play
+						[ description: "autoplay rendered buffer." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @spread
+						[ description: "multichannel panning spread, between 0 and 1." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+					[ @fade
+						[ description: "fade in/out applied to every buffer, in milliseconds" ]
+						[ type: int/float ]
+						[ default: 5 ]
+					]
+					[ @reset
+						[ description: "remove all previously transcribed buffers after rendering." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @process
+						[ description: "optional post-rendering audio processing commands." ]
+						[ type: list/llll/null ]
+						[ default: null ]
+					]
+				]
+			]
+			[ output:
+				[ description: "rendered buffer" ]
+				[ type: llll ]
+			]
+		]
+		[ process
+			[ description: `Applies\ a\ sequence\ of\ DSP\ operations\ to\ the\ input\ buffer\,\ prior\ to\ rendering\,\ via\ audio\ processing\ commands.\ These\ commands\ are\ generated\ through\ functions\ (e.g.\,\ see\ #reverse\,\ #paulstretch\,\ #freeverb\,\ #rubberband)\,\ which\ contain\ the\ parameters\ for\ that\ specific\ DSP\ operation.\ See\ @process\ argument\ in\ #render. ]
+			[ arguments:
+				[ required:
+					[ "@buffer ?"
+						[ description: "buffer to process." ]
+						[ type: llll ]
+					]
+					[ "@commands ?"
+						[ description: "list of audio process commands." ]
+						[ type: llll ]
+					]
+				]
+				[ optional:
+					[ @prefade
+						[ description: "optional pre-fade amount, in milliseconds." ]
+						[ type: llll/null ]
+						[ default: 0 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "processed buffer" ]
+				[ type: llll ]
+			]
+		]
+		[ fade
+			[ description: "Audio process command for applying fadein/fadeout to a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @fadein
+						[ description: "fade-in duration." ]
+						[ type: int/float ]
+						[ default: 5 ]
+					]
+					[ @fadeout
+						[ description: "fade-out duration." ]
+						[ type: int/float ]
+						[ default: 5 ]
+					]
+					[ @fadeintype
+						[ description: "fade-in type." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: linear ]
+							[ 1: sine ]
+							[ 2: curve ]
+							[ 3: s-curve ]
+						]
+					]
+					[ @fadeouttype
+						[ description: "fade-out type." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: linear ]
+							[ 1: sine ]
+							[ 2: curve ]
+							[ 3: s-curve ]
+						]
+					]
+					[ @fadeincurve
+						[ description: "fade-in curve amount, between -1 and 1." ]
+						[ type: int/float ]
+						[ default: -0.25 ]
+					]
+					[ @fadeoutcurve
+						[ description: "fade-out curve amount, between -1 and 1." ]
+						[ type: int/float ]
+						[ default: 0.25 ]
+					]
+					[ @timeunit
+						[ description: "time unit for @start and @end." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "fade command" ]
+				[ type: llll ]
+			]
+		]
+		[ crop
+			[ description: "Audio process command for cropping a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @start
+						[ description: "start time." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+					[ @end
+						[ description: "end time." ]
+						[ type: int/float ]
+						[ default: 1000 ]
+					]
+					[ @timeunit
+						[ description: "time unit for @start and @end." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "crop command" ]
+				[ type: llll ]
+			]
+		]
+		[ reverse
+			[ description: "Audio process command for reversing a buffer. See #process." ]
+			[ arguments: none ]
+			[ output:
+				[ description: "reverse command" ]
+				[ type: llll ]
+			]
+		]
+		[ dcfilter
+			[ description: "Audio process command for removing DC offset from a buffer. See #process." ]
+			[ arguments: none ]
+			[ output:
+				[ description: "dcfilter command" ]
+				[ type: llll ]
+			]
+		]
+		[ getchannels
+			[ description: "Extracts one or more buffer channels as individual buffers." ]
+			[ arguments:
+				[ required:
+					[ "@buffer ?"
+						[ description: "buffer to extract channels from." ]
+						[ type: llll ]
+					]
+				]
+				[ optional:
+					[ @channels
+						[ description: "number to channels to extract — ignored when @all is 1." ]
+						[ type: int/list/llll/null ]
+						[ default: null ]
+					]
+					[ @all
+						[ description: "extract all channels." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "channels as buffers" ]
+				[ type: llll ]
+			]
+		]
+		[ freeverb
+			[ description: "Audio process command for applying reverb to a buffer. See #process function." ]
+			[ arguments:
+				[ optional:
+					[ @roomsize
+						[ description: "reverb room size" ]
+						[ type: int/float ]
+						[ default: 0.5 ]
+					]
+					[ @damp
+						[ description: "damping coefficient" ]
+						[ type: int/float ]
+						[ default: 0.5 ]
+					]
+					[ @width
+						[ description: "panning width/spread, from 0 to 1." ]
+						[ type: int/float ]
+						[ default: 0.5 ]
+					]
+					[ @tail
+						[ description: "duration of reverb tail in ms." ]
+						[ type: int/float ]
+						[ default: -1 ]
+						[ options:
+							[ -1: auto ]
+							[ 0: no tail ]
+							[ >0: duration in ms ]
+						]
+					]
+					[ @dry
+						[ description: "amount of dry output, as either a single number or envelope." ]
+						[ type: int/float/llll ]
+						[ default: 1 ]
+					]
+					[ @wet
+						[ description: "amount of wet output, as either a single number or envelope." ]
+						[ type: int/float/llll ]
+						[ default: 0.16 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "freeverb command" ]
+				[ type: llll ]
+			]
+		]
+		[ paulstretch
+			[ description: "Audio process command for applying time-stretching to a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @stretching
+						[ description: "stretching amount, as single number or envelope." ]
+						[ type: int/float/llll ]
+						[ default: 1 ]
+					]
+					[ @timeunit
+						[ description: "time unit for @stretching." ]
+						[ type: int ]
+						[ default: 2 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+					[ @envtimeunit
+						[ description: "time unit for @stretching envelope." ]
+						[ type: int ]
+						[ default: 2 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+					[ @spectral
+						[ description: "stretching mode." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: frequency domain ]
+							[ 1: time domain ]
+						]
+					]
+					[ @framesize
+						[ description: "analysis frame size, in samples." ]
+						[ type: int ]
+						[ default: 8192 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "paulstretch command" ]
+				[ type: llll ]
+			]
+		]
+		[ paulfreeze
+			[ description: "Audio process command for freezing a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @duration
+						[ description: "freezing duration, based on @timeunit." ]
+						[ type: int/float ]
+						[ default: 1000 ]
+					]
+					[ @position
+						[ description: "freezing position, as <time> or <time> <jitter>. To jitter through full buffer, use 'all'." ]
+						[ type: int/float/list ]
+						[ default: 0 ]
+					]
+					[ @timeunit
+						[ description: "time unit." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+					[ @spectral
+						[ description: "stretching mode." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: frequency domain ]
+							[ 1: time domain ]
+						]
+					]
+					[ @framesize
+						[ description: "analysis frame size, in samples." ]
+						[ type: int ]
+						[ default: 8192 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "paulfreeze command" ]
+				[ type: llll ]
+			]
+		]
+		[ overdrive
+			[ description: "Audio process command for applying soft-clip distortion to a buffer. See #process." ]
+			[ arguments:
+				[ required:
+					[ "@factor ?"
+						[ description: "amplitude distortion factor, either as single number or envelope." ]
+						[ type: int/float/llll ]
+					]
+				]
+			]
+			[ output:
+				[ description: "overdrive command" ]
+				[ type: llll ]
+			]
+		]
+		[ window
+			[ description: "Audio process command for applying a windowing function to a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @wintype
+						[ description: "window type, as a symbol" ]
+						[ type: symbol ]
+						[ default: 'hann' ]
+						[ options:
+							[ 'rectangular' ]
+							[ 'triangular' ]
+							[ 'sine' ]
+							[ 'hann' ]
+							[ 'hamming' ]
+							[ 'blackman' ]
+							[ 'nuttall' ]
+							[ 'blackmannuttall' ]
+							[ 'blackmanharris' ]
+							[ 'gaussian' ]
+							[ 'sqrthann' ]
+							[ 'sqrthamming' ]
+						]
+					]
+					[ @winnormalized
+						[ description: "normalize window samples to sum up to 1 and multiply by a factor of 2." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @zeropadding
+						[ description: "number of samples for zero padding." ]
+						[ type: int ]
+						[ default: 0 ]
+					]
+					[ @zerophase
+						[ description: "zero phase windowing" ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "window command" ]
+				[ type: llll ]
+			]
+		]
+		[ biquad
+			[ description: "Audio process command for applying biquad filtering to a buffer. See #process." ]
+			[ arguments:
+				[ required:
+					[ "@type ?"
+						[ description: "filter type, as a symbol or integer." ]
+						[ type: int/symbol ]
+						[ options:
+							[ 0: lowpass ]
+							[ 1: highpass ]
+							[ 2: bandpass ]
+							[ 3: bandstop ]
+							[ 4: peaknotch ]
+							[ 5: lowshelf ]
+							[ 6: highshelf ]
+							[ 7: resonant ]
+							[ 8: allpass ]
+						]
+					]
+				]
+				[ optional:
+					[ @frequency
+						[ description: "cutoff/center frequency." ]
+						[ type: int/float ]
+						[ default: 2000 ]
+					]
+					[ @gain
+						[ description: "linear gain." ]
+						[ type: int/float ]
+						[ default: 1 ]
+					]
+					[ @q
+						[ description: "resonance or slope, depending on @type." ]
+						[ type: int/float ]
+						[ default: 80 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "biquad command" ]
+				[ type: llll ]
+			]
+		]
+		[ clip
+			[ description: "Audio process command for applying hard-clip distortion to a buffer. See #process." ]
+			[ arguments:
+				[ required:
+					[ "@threshold ?"
+						[ description: "distortion amplitude threshold, either as single number or envelope." ]
+						[ type: int/float/llll ]
+					]
+				]
+			]
+			[ output:
+				[ description: "clip command" ]
+				[ type: llll ]
+			]
+		]
+		[ rubberband
+			[ description: "Audio process command for applying rubberband pitch-shifting/time-stretching to a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @stretching
+						[ description: "stretching amount, as single number or envelope." ]
+						[ type: int/float/llll ]
+						[ default: 1 ]
+					]
+					[ @pitchshift
+						[ description: "pitch shifting amount, as single number or envelope." ]
+						[ type: int/float/llll ]
+						[ default: 0 ]
+					]
+					[ @pitchunit
+						[ description: "unit for @pitchshift." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: cents ]
+							[ 1: MIDI ]
+							[ 2: Hertz ]
+							[ 3: frequency ratio ]
+						]
+					]
+					[ @timeunit
+						[ description: "time unit for @stretching." ]
+						[ type: int ]
+						[ default: 2 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+					[ @envtimeunit
+						[ description: "time unit for @stretching envelope." ]
+						[ type: int ]
+						[ default: 2 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+					[ @blocksize
+						[ description: "size for granular processes, such as envelopes, in samples." ]
+						[ type: int ]
+						[ default: 1024 ]
+					]
+					[ @fftwin
+						[ description: "FFT window type." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: short ]
+							[ 1: standard ]
+							[ 2: long ]
+						]
+					]
+					[ @phase
+						[ description: "phase adjustment mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: elastic ]
+							[ 1: precise ]
+						]
+					]
+					[ @pitchmode
+						[ description: "pitch shift mode." ]
+						[ type: int ]
+						[ default: 2 ]
+						[ options:
+							[ 0: high speed ]
+							[ 1: high quality ]
+							[ 2: high consistency ]
+						]
+					]
+					[ @formants
+						[ description: "formant processing." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @smoothing
+						[ description: "time-domain smoothing." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @stretchmode
+						[ description: "stretch mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: elastic ]
+							[ 1: precise ]
+						]
+					]
+					[ @detector
+						[ description: "transient detection algorithm." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: compound ]
+							[ 1: percussive ]
+							[ 2: soft ]
+						]
+					]
+					[ @transients
+						[ description: "transient type." ]
+						[ type: int ]
+						[ default: 2 ]
+						[ options:
+							[ 0: crisp ]
+							[ 1: mixed ]
+							[ 2: smooth ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "rubberband command" ]
+				[ type: llll ]
+			]
+		]
+		[ soundtouch
+			[ description: "Audio process command for applying soundtouch pitch-shifting/time-stretching to a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @stretching
+						[ description: "stretching amount, as a single number." ]
+						[ type: int/float ]
+						[ default: 1 ]
+					]
+					[ @pitchshift
+						[ description: "pitch shifting amount, as single number." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+					[ @pitchunit
+						[ description: "unit for @pitchshift." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: cents ]
+							[ 1: MIDI ]
+							[ 2: Hertz ]
+							[ 3: frequency ratio ]
+						]
+					]
+					[ @timeunit
+						[ description: "time unit for @stretching." ]
+						[ type: int ]
+						[ default: 2 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+					[ @antialias
+						[ description: "anti-aliasing filter." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @quick
+						[ description: "quick processing. " ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @speech
+						[ description: "tune algorithm for speech. " ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "soundtouch command" ]
+				[ type: llll ]
+			]
+		]
+		[ groove
+			[ description: "Audio processing command for applying variable-rate sample playback to a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @rate
+						[ description: "playback rate, as either a single number, envelope, or control buffer." ]
+						[ type: int/float/list/llll ]
+						[ default: 1 ]
+					]
+					[ @duration
+						[ description: "duration in milliseconds. Ignored if @rate is a buffer." ]
+						[ type: int/float ]
+						[ default: 1000 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "groove command" ]
+				[ type: llll ]
+			]
+		]
+		[ freqshift
+			[ description: "Audio process command for applying frequency shifting to a buffer. See #process." ]
+			[ arguments:
+				[ required:
+					[ "@shift ?"
+						[ description: "frequency shift in Hertz, as either a single number, an envelope or buffer." ]
+						[ type: int/float/list/llll ]
+					]
+				]
+				[ optional:
+					[ @negative
+						[ description: "Include negative sideband  in output." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "freqshift command" ]
+				[ type: llll ]
+			]
+		]
+		[ degrade
+			[ description: "Audio process command for reducing sampling rate and bit-depth of a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @ratio
+						[ description: "sampling rate ratio." ]
+						[ type: int/float/llll ]
+						[ default: 0.5 ]
+					]
+					[ @bits
+						[ description: "bit depth." ]
+						[ type: int/float/llll ]
+						[ default: 4 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "degrade command" ]
+				[ type: llll ]
+			]
+		]
+		[ rounding
+			[ description: "Audio process command for applying signal rounding to a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @value
+						[ description: "rounding value, as either a single number, envelope, or buffer." ]
+						[ type: int/float/list/llll ]
+						[ default: 1 ]
+					]
+					[ @nearest
+						[ description: "rounding behavior" ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: floor ]
+							[ 1: nearest ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "rounding command" ]
+				[ type: llll ]
+			]
+		]
+		[ teeth
+			[ description: "Audio process command for applying comb filtering to a buffer, with feedforward and feedback delay control. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @feedforward
+						[ description: "feedforward delay time, in milliseconds, as either a single number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+						[ default: 5 ]
+					]
+					[ @feedback
+						[ description: "feedback delay time, in milliseconds, as either a single number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+						[ default: 10 ]
+					]
+					[ @gain
+						[ description: "linear gain, as either a single number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+						[ default: 0.5 ]
+					]
+					[ @feedforwardgain
+						[ description: "linear feedforward gain, as either a single number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+						[ default: 0.5 ]
+					]
+					[ @feedbackgain
+						[ description: "linear feedback gain, as either a single number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+						[ default: -0.5 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "teeth command" ]
+				[ type: llll ]
+			]
+		]
+		[ pong
+			[ description: "Audio process command for applying range limiting to a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @low
+						[ description: "low limit value, as either a single number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+						[ default: -1 ]
+					]
+					[ @high
+						[ description: "high limit value, as either a single number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+						[ default: 1 ]
+					]
+					[ @mode
+						[ description: "range limiting mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: fold ]
+							[ 1: wrap ]
+							[ 2: clip ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "pong command" ]
+				[ type: llll ]
+			]
+		]
+		[ retune
+			[ description: "Audio process command for applying autotune-like pitch retuning to a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @pitchgrid
+						[ description: "pitch grid to retune to, as a list of pitch classes." ]
+						[ type: int/float/list ]
+						[ default: 0 ]
+					]
+					[ @threshold
+						[ description: "correction threshold." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+					[ @ambiencethreshold
+						[ description: "correction ambience threshold, between -10 and 10." ]
+						[ type: int/float ]
+						[ default: 0.3 ]
+					]
+					[ @amount
+						[ description: "pitch correction amount." ]
+						[ type: int/float ]
+						[ default: 100 ]
+					]
+					[ @bypass
+						[ description: "pitch correction auto-bypass threshold, at which signal passes unaffected." ]
+						[ type: int/float ]
+						[ default: 100 ]
+					]
+					[ @quality
+						[ description: "pitch correction quality." ]
+						[ type: symbol ]
+						[ default: 'basic' ]
+						[ options:
+							[ 'basic' ]
+							[ 'good' ]
+							[ 'better' ]
+							[ 'best' ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "retune command" ]
+				[ type: llll ]
+			]
+		]
+		[ waveshape
+			[ description: "Audio process command for waveshaping a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @phase
+						[ description: "buffer phase envelope between -1 and 1, either as an envelope or a buffer." ]
+						[ type: int/float ]
+						[ default: -1 1 ]
+					]
+					[ @duration
+						[ description: "envelope duration in milliseconds. Ignored if @phase is a buffer." ]
+						[ type: int ]
+						[ default: 1000 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "waveshape command" ]
+				[ type: llll ]
+			]
+		]
+		[ scrub
+			[ description: "Audio process command for scrubbing through a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @phase
+						[ description: "buffer phase envelope between 0 and 1, either as an envelope or a buffer." ]
+						[ type: int/float ]
+						[ default: 0 1 ]
+					]
+					[ @duration
+						[ description: "envelope duration in milliseconds. Ignored if @phase is a buffer." ]
+						[ type: int ]
+						[ default: 1000 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "scrub command" ]
+				[ type: llll ]
+			]
+		]
+		[ repeat
+			[ description: "Audio process command for repeating a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @duration
+						[ description: "target duration, based on @timeunit." ]
+						[ type: int/float ]
+						[ default: 2 ]
+					]
+					[ @timeunit
+						[ description: "time unit for @duration." ]
+						[ type: int ]
+						[ default: 2 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "repeat command" ]
+				[ type: llll ]
+			]
+		]
+		[ scaling
+			[ description: "Audio process command for applying amplitude scaling to a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @inmin
+						[ description: "input minimum value." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+					[ @inmax
+						[ description: "input maximum value." ]
+						[ type: int/float ]
+						[ default: 1 ]
+					]
+					[ @outmin
+						[ description: "output minimum value." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+					[ @outmax
+						[ description: "output maximum value." ]
+						[ type: int/float ]
+						[ default: 1 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "scaling command" ]
+				[ type: llll ]
+			]
+		]
+		[ mix
+			[ description: "Audio process command for mixing multiple buffers. See #process." ]
+			[ arguments:
+				[ required:
+					[ "@buffers ?"
+						[ description: "list of buffers to mix." ]
+						[ type: list/llll ]
+					]
+				]
+				[ optional:
+					[ @gains
+						[ description: "gain values for each buffer to mix, as either a single number or envelope." ]
+						[ type: list/llll/null ]
+						[ default: null ]
+					]
+					[ @offsets
+						[ description: "time offset values for each buffer to mix." ]
+						[ type: list/null ]
+						[ default: null ]
+					]
+					[ @resamplingfiltersize
+						[ description: "resampling filter size." ]
+						[ type: int ]
+						[ default: 11 ]
+					]
+					[ @resamplingmode
+						[ description: "resampling mode." ]
+						[ type: symbol ]
+						[ default: 'sinc' ]
+						[ options:
+							[ 'sinc' ]
+							[ 'nearest neighbor' ]
+							[ 'sample and hold' ]
+							[ 'linear' ]
+							[ 'quad' ]
+							[ 'cubic' ]
+						]
+					]
+					[ @resamplingpolicy
+						[ description: "resampling policy." ]
+						[ type: int ]
+						[ default: 3 ]
+						[ options:
+							[ 0: don't ]
+							[ 1: to lowest ]
+							[ 2: to highest ]
+							[ 3: to most common ]
+							[ 4: to max. current ]
+						]
+					]
+					[ @ampunit
+						[ description: "amplitude unit." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: linear ]
+							[ 1: decibels ]
+						]
+					]
+					[ @envampunit
+						[ description: "envelope amplitude unit." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: linear ]
+							[ 1: decibels ]
+						]
+					]
+					[ @timeunit
+						[ description: "time unit." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+					[ @envtimeunit
+						[ description: "envelope time unit." ]
+						[ type: int ]
+						[ default: 2 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+					[ @interp
+						[ description: "band-limited interpolation via resampling for non-integer offsets." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @normalize
+						[ description: normalization. ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: never ]
+							[ 1: always ]
+							[ 2: overload protection only ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "mix command" ]
+				[ type: llll ]
+			]
+		]
+		[ absolute
+			[ description: "Audio process command for computing the absolute value of a buffer signal. See #process." ]
+			[ arguments: none ]
+			[ output:
+				[ description: "absolute command" ]
+				[ type: llll ]
+			]
+		]
+		[ squareroot
+			[ description: "Audio process command for computing the square root of a buffer signal. See #process." ]
+			[ arguments: none ]
+			[ output:
+				[ description: "squareroot command" ]
+				[ type: llll ]
+			]
+		]
+		[ power
+			[ description: "Audio process command for performing exponentiation on a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @operand
+						[ description: "value to raise buffer signal to, either as a single number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+						[ default: 2 ]
+					]
+					[ @resamplingfiltersize
+						[ description: "resampling filter size." ]
+						[ type: int ]
+						[ default: 11 ]
+					]
+					[ @resamplingmode
+						[ description: "resampling mode." ]
+						[ type: symbol ]
+						[ default: 'sinc' ]
+						[ options:
+							[ 'sinc' ]
+							[ 'nearest neighbor' ]
+							[ 'sample and hold' ]
+							[ 'linear' ]
+							[ 'quad' ]
+							[ 'cubic' ]
+						]
+					]
+					[ @resamplingpolicy
+						[ description: "resampling policy." ]
+						[ type: int ]
+						[ default: 3 ]
+						[ options:
+							[ 0: don't ]
+							[ 1: to lowest ]
+							[ 2: to highest ]
+							[ 3: to most common ]
+							[ 4: to max. current ]
+						]
+					]
+					[ @envtimeunit
+						[ description: "envelope time unit." ]
+						[ type: int ]
+						[ default: 2 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "power command" ]
+				[ type: llll ]
+			]
+		]
+		[ plus
+			[ description: "Audio process command for performing addition on a buffer. See #process." ]
+			[ arguments:
+				[ required:
+					[ "@operand ?"
+						[ description: "value to add to buffer, either as a single number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+					]
+				]
+				[ optional:
+					[ @resamplingfiltersize
+						[ description: "resampling filter size." ]
+						[ type: int ]
+						[ default: 11 ]
+					]
+					[ @resamplingmode
+						[ description: "resampling mode." ]
+						[ type: symbol ]
+						[ default: 'sinc' ]
+						[ options:
+							[ 'sinc' ]
+							[ 'nearest neighbor' ]
+							[ 'sample and hold' ]
+							[ 'linear' ]
+							[ 'quad' ]
+							[ 'cubic' ]
+						]
+					]
+					[ @resamplingpolicy
+						[ description: "resampling policy." ]
+						[ type: int ]
+						[ default: 3 ]
+						[ options:
+							[ 0: don't ]
+							[ 1: to lowest ]
+							[ 2: to highest ]
+							[ 3: to most common ]
+							[ 4: to max. current ]
+						]
+					]
+					[ @envtimeunit
+						[ description: "envelope time unit." ]
+						[ type: int ]
+						[ default: 2 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "plus command" ]
+				[ type: llll ]
+			]
+		]
+		[ minus
+			[ description: "Audio process command for performing subtraction on a buffer. See #process." ]
+			[ arguments:
+				[ required:
+					[ "@operand ?"
+						[ description: "value to subtract from buffer, either as a single number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+					]
+				]
+				[ optional:
+					[ @resamplingfiltersize
+						[ description: "resampling filter size." ]
+						[ type: int ]
+						[ default: 11 ]
+					]
+					[ @resamplingmode
+						[ description: "resampling mode." ]
+						[ type: symbol ]
+						[ default: 'sinc' ]
+						[ options:
+							[ 'sinc' ]
+							[ 'nearest neighbor' ]
+							[ 'sample and hold' ]
+							[ 'linear' ]
+							[ 'quad' ]
+							[ 'cubic' ]
+						]
+					]
+					[ @resamplingpolicy
+						[ description: "resampling policy." ]
+						[ type: int ]
+						[ default: 3 ]
+						[ options:
+							[ 0: don't ]
+							[ 1: to lowest ]
+							[ 2: to highest ]
+							[ 3: to most common ]
+							[ 4: to max. current ]
+						]
+					]
+					[ @envtimeunit
+						[ description: "envelope time unit." ]
+						[ type: int ]
+						[ default: 2 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "minus command" ]
+				[ type: llll ]
+			]
+		]
+		[ multiply
+			[ description: "Audio process command for performing multiplication on a buffer. See #process." ]
+			[ arguments:
+				[ required:
+					[ "@operand ?"
+						[ description: "value to multiply buffer by either as a single number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+					]
+				]
+				[ optional:
+					[ @resamplingfiltersize
+						[ description: "resampling filter size." ]
+						[ type: int ]
+						[ default: 11 ]
+					]
+					[ @resamplingmode
+						[ description: "resampling mode." ]
+						[ type: symbol ]
+						[ default: 'sinc' ]
+						[ options:
+							[ 'sinc' ]
+							[ 'nearest neighbor' ]
+							[ 'sample and hold' ]
+							[ 'linear' ]
+							[ 'quad' ]
+							[ 'cubic' ]
+						]
+					]
+					[ @resamplingpolicy
+						[ description: "resampling policy." ]
+						[ type: int ]
+						[ default: 3 ]
+						[ options:
+							[ 0: don't ]
+							[ 1: to lowest ]
+							[ 2: to highest ]
+							[ 3: to most common ]
+							[ 4: to max. current ]
+						]
+					]
+					[ @envtimeunit
+						[ description: "envelope time unit." ]
+						[ type: int ]
+						[ default: 2 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "multiply command" ]
+				[ type: llll ]
+			]
+		]
+		[ divide
+			[ description: "Audio process command for performing division on a buffer. See #process." ]
+			[ arguments:
+				[ required:
+					[ "@operand ?"
+						[ description: "value to divide buffer by either as a single number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+					]
+				]
+				[ optional:
+					[ @resamplingfiltersize
+						[ description: "resampling filter size." ]
+						[ type: int ]
+						[ default: 11 ]
+					]
+					[ @resamplingmode
+						[ description: "resampling mode." ]
+						[ type: symbol ]
+						[ default: 'sinc' ]
+						[ options:
+							[ 'sinc' ]
+							[ 'nearest neighbor' ]
+							[ 'sample and hold' ]
+							[ 'linear' ]
+							[ 'quad' ]
+							[ 'cubic' ]
+						]
+					]
+					[ @resamplingpolicy
+						[ description: "resampling policy." ]
+						[ type: int ]
+						[ default: 3 ]
+						[ options:
+							[ 0: don't ]
+							[ 1: to lowest ]
+							[ 2: to highest ]
+							[ 3: to most common ]
+							[ 4: to max. current ]
+						]
+					]
+					[ @envtimeunit
+						[ description: "envelope time unit." ]
+						[ type: int ]
+						[ default: 2 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "divide command" ]
+				[ type: llll ]
+			]
+		]
+		[ wavesetrepeat
+			[ description: "Audio process command for applying waveset repetition to a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @times
+						[ description: "number of repetitions." ]
+						[ type: int ]
+						[ default: 2 ]
+					]
+					[ @span
+						[ description: "number of negative-to-positive zero crossing regions that form a waveset." ]
+						[ type: int ]
+						[ default: 1 ]
+					]
+					[ @normalize
+						[ description: "waveset normalization." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "waveset repeat command" ]
+				[ type: llll ]
+			]
+		]
+		[ wavesetshuffle
+			[ description: "Audio process command for applying waveset shuffling to a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @maxdist
+						[ description: "maximum shuffling distance." ]
+						[ type: int ]
+						[ default: 1 ]
+					]
+					[ @span
+						[ description: "number of negative-to-positive zero crossing regions that form a waveset." ]
+						[ type: int ]
+						[ default: 1 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "waveset shuffle command" ]
+				[ type: llll ]
+			]
+		]
+		[ rampsmooth
+			[ description: "Audio process command for applying rampsmoothing to a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @up
+						[ description: "ramp up, in samples, as either a single number, envelope, or buffer." ]
+						[ type: int/list/llll ]
+						[ default: 1024 ]
+					]
+					[ @down
+						[ description: "ramp down, in samples, as either a single number, envelope, or buffer." ]
+						[ type: int/list/llll ]
+						[ default: 1024 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "rampsmooth command" ]
+				[ type: llll ]
+			]
+		]
+		[ onepole
+			[ description: "Audio process command for applying single-pole lowpass or highpass filtering to a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @cutoff
+						[ description: "cutoff frequency." ]
+						[ type: int/float ]
+						[ default: 1 ]
+					]
+					[ @highpass
+						[ description: "highpass filter mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "onepole command" ]
+				[ type: llll ]
+			]
+		]
+		[ mixdown
+			[ description: `Audio\ process\ command\ for\ mixing\ down\ (or\ up)\ the\ number\ of\ channels\ of\ a\ buffer.\ See\ #process. ]
+			[ arguments:
+				[ optional:
+					[ @numchannels
+						[ description: "number of output channels." ]
+						[ type: int ]
+						[ default: 1 ]
+					]
+					[ @channelmode
+						[ description: "downmixing channel conversion type." ]
+						[ type: int ]
+						[ default: 3 ]
+						[ options:
+							[ 0: delete all samples ]
+							[ 1: only keep "existing channels" ]
+							[ 2: pad last channel ]
+							[ 3: cyclic repetition of channels while upmixing. ]
+							[ 4: palindrome cycling of channels while upmixing. ]
+							[ 5: pan channels to new configuration ]
+						]
+					]
+					[ @autogain
+						[ description: "apply audio compensation, based on ratio between input and output channels." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "onepole command" ]
+				[ type: llll ]
+			]
+		]
+		[ join
+			[ description: "Audio process command for concatenating one or more buffers to the processed buffer. See #process." ]
+			[ arguments:
+				[ required:
+					[ "@buffers ?"
+						[ description: "buffers to concatenate." ]
+						[ type: llll ]
+					]
+				]
+				[ optional:
+					[ @xfade
+						[ description: "duration of the crossfade, in samples." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+					[ @xfadecurve
+						[ description: "curve parameter for the crossfade." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+					[ @xfadetype
+						[ description: "cross fade type." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: linear ]
+							[ 1: sine ]
+							[ 2: curve ]
+							[ 3: s-curve ]
+						]
+					]
+					[ @fadeboundaries
+						[ description: "fade beginning of first buffer and end of last buffer." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @timeunit
+						[ description: "time unit." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+					[ @resamplingfiltersize
+						[ description: "resampling filter size." ]
+						[ type: int ]
+						[ default: 11 ]
+					]
+					[ @resamplingmode
+						[ description: "resampling mode." ]
+						[ type: symbol ]
+						[ default: 'sinc' ]
+						[ options:
+							[ 'sinc' ]
+							[ 'nearest neighbor' ]
+							[ 'sample and hold' ]
+							[ 'linear' ]
+							[ 'quad' ]
+							[ 'cubic' ]
+						]
+					]
+					[ @resamplingpolicy
+						[ description: "resampling policy." ]
+						[ type: int ]
+						[ default: 3 ]
+						[ options:
+							[ 0: don't ]
+							[ 1: to lowest ]
+							[ 2: to highest ]
+							[ 3: to most common ]
+							[ 4: to max. current ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "join command" ]
+				[ type: llll ]
+			]
+		]
+		[ trim
+			[ description: "Audio process command for applying silence-based trimming to a buffer. When the entire buffer is considered silent, the resulting buffer's duration will be a single audio sample. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @threshold
+						[ description: "amplitude threshold at/below which samples are considered silence." ]
+						[ type: int/float ]
+						[ default: 0.1 ]
+					]
+					[ @ampunit
+						[ description: "amplitude unit for @threshold." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: linear ]
+							[ 1: decibels ]
+						]
+					]
+					[ @start
+						[ description: "trim the beginning of the buffer." ]
+						[ type: int/float ]
+						[ default: 1 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @end
+						[ description: "trim the end of the buffer." ]
+						[ type: int/float ]
+						[ default: 1 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "join command" ]
+				[ type: llll ]
+			]
+		]
+		[ timesquash
+			[ description: "Audio process command for applying timesquash time compression to a buffer. This removes time from a sample by shifting portions of the spectrogram while preserving the relevant content. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @duration
+						[ description: "target duration, based on @timeunit." ]
+						[ type: int/float ]
+						[ default: 1 ]
+					]
+					[ @timeunit
+						[ description: "time unit for @duration."
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+						[ type: int ]
+						[ default: 2 ]
+					]
+					[ @timeblock
+						[ description: "duration of each time block to be removed." ]
+						[ type: int ]
+						[ default: 4096 ]
+					]
+					[ @mode
+						[ description: "working mode." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: frequency domain ]
+							[ 1: time domain ]
+						]
+					]
+					[ @xfade
+						[ description: "duration of the crossfade, in samples." ]
+						[ type: int/float ]
+						[ default: 4096 ]
+					]
+					[ @xfadecurve
+						[ description: "curve parameter for the crossfade." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+					[ @xfadetype
+						[ description: "cross fade type." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: linear ]
+							[ 1: sine ]
+							[ 2: curve ]
+							[ 3: s-curve ]
+						]
+					]
+					[ @glbleed
+						[ description: "number of frames of invalidation for the Griffin-Lim algorithm, when @phasehandling is 2." ]
+						[ type: int ]
+						[ default: 4 ]
+					]
+					[ @glnumiter
+						[ description: "number of Griffin-Lim iterations, when @phasehandling is 2." ]
+						[ type: int ]
+						[ default: 10 ]
+					]
+					[ @glrandomize
+						[ description: "randomize the phases of the regions subject to the Griffin-Lim algorithm, when @phasehandling is 2." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @glrect
+						[ description: "invalidate whole rectangular regions whose phases are recomputed via the Griffin-Lim algorithm, when @phasehandling is 2." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @batchsize
+						[ description: "number of seams processed in batch." ]
+						[ type: int ]
+						[ default: 1 ]
+					]
+					[ @batchinterrupt
+						[ description: "interrupt batch when crossing." ]
+						[ type: int ]
+						[ default: 0 ]
+					]
+					[ @energy
+						[ description: "energy function used for computing seams." ]
+						[ type: int ]
+						[ default: 2 ]
+						[ options:
+							[ 0: magnitude ]
+							[ 1: gradient magnitude ]
+							[ 2: Sobel ]
+						]
+					]
+					[ @forwardenergy
+						[ description: "amount of forward energy contribution." ]
+						[ type: int/float ]
+						[ default: 1 ]
+					]
+					[ @forwardenergyembed
+						[ description: "embed forward energy in cumulative matrix." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @forwardenergytype
+						[ description: "forward energy type." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: gradient L1 norm ]
+							[ 1: energy L2 norm ]
+						]
+					]
+					[ @framesize
+						[ description: "window size, in samples" ]
+						[ type: int ]
+						[ default: 2048 ]
+					]
+					[ @hopsize
+						[ description: "hop size, in samples" ]
+						[ type: int ]
+						[ default: 1024 ]
+					]
+					[ @phasehandling
+						[ description: "phase handling mode." ]
+						[ type: int ]
+						[ default: 2 ]
+						[ options:
+							[ 0: keep ]
+							[ 1: compensate ]
+							[ 2: Griffin-Lim ]
+						]
+					]
+					[ @regularization
+						[ description: "how much energy of a bin smears on the ones above and below, between 0 and 1." ]
+						[ type: int/float ]
+						[ default: 0.01 ]
+					]
+					[ @wintype
+						[ description: "window type." ]
+						[ type: list/symbol ]
+						[ default: 'sqrthann' 'sqrthann' ]
+						[ options:
+							[ 'rectangular' ]
+							[ 'triangular' ]
+							[ 'sine' ]
+							[ 'hann' ]
+							[ 'hamming' ]
+							[ 'blackman' ]
+							[ 'nuttall' ]
+							[ 'blackmannuttall' ]
+							[ 'blackmanharris' ]
+							[ 'gaussian' ]
+							[ 'sqrthann' ]
+							[ 'sqrthamming' ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "timesquash command" ]
+				[ type: llll ]
+			]
+		]
+		[ resample
+			[ description: "Audio process command for applying stretching/pitch shifting a buffer via resampling. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @duration
+						[ description: "target duration, based on @timeunit." ]
+						[ type: int/float ]
+						[ default: 1 ]
+					]
+					[ @timeunit
+						[ description: "time unit for @duration." ]
+						[ type: int ]
+						[ default: 2 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+					[ @changesr
+						[ description: "change sampling rate." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @antimeunit
+						[ description: "time unit for analysis." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+					[ @resamplingmode
+						[ description: "resampling mode." ]
+						[ type: symbol ]
+						[ default: 'sinc' ]
+						[ options:
+							[ 'sinc' ]
+							[ 'nearest neighbor' ]
+							[ 'sample and hold' ]
+							[ 'linear' ]
+							[ 'quad' ]
+							[ 'cubic' ]
+						]
+					]
+					[ @resamplingfiltersize
+						[ description: "resampling filter size." ]
+						[ type: int ]
+						[ default: 11 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "resample command" ]
+				[ type: llll ]
+			]
+		]
+		[ panning
+			[ description: "Audio process command for applying 1-D panning to a buffer. See #process." ]
+			[ arguments:
+				[ required:
+					[ "@position ?"
+						[ description: "panning position, as either a single number, envelope, or buffer." ]
+						[ type: int/float/list/llll ]
+					]
+				]
+				[ optional:
+					[ @numchannels
+						[ description: "number of output channels." ]
+						[ type: int ]
+						[ default: 2 ]
+					]
+					[ @panmode
+						[ description: "panning mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: linear ]
+							[ 1: circular ]
+						]
+					]
+					[ @panlaw
+						[ description: "panning law." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: nearest neighbor ]
+							[ 1: cosine ]
+						]
+					]
+					[ @rangetype
+						[ description: "panning range type." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: custom ]
+							[ 1: `0 to `1 ]
+							[ 2: `-1 to `1 ]
+							[ 3: loudspeaker number — 0-based ]
+							[ 4: loudspeaker number — 1-based ]
+						]
+					]
+					[ @range
+						[ description: "panning range, as a <min> <max> value pair. Ignored unless @rangetype is 0" ]
+						[ type: list ]
+						[ default: 0 1 ]
+					]
+					[ @compensate
+						[ description: "Reduce gain for multichannel files by a factor of the number of channels." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @spread
+						[ description: "multichannel panning spread, between 0 and 1." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+					[ @envtimeunit
+						[ description: "time unit for @gain envelope." ]
+						[ type: int ]
+						[ default: 2 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "normalize command" ]
+				[ type: llll ]
+			]
+		]
+		[ normalize
+			[ description: "Audio process command for normalizing the amplitude of a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @level
+						[ description: "reference level." ]
+						[ type: int/float ]
+						[ default: -6 ]
+					]
+					[ @mix
+						[ description: "dry/wet mix, between 0 and 1." ]
+						[ type: int ]
+						[ default: 1 ]
+					]
+					[ @rms
+						[ description: "use root mean square." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @ampunit
+						[ description: "amplitude unit for @level." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: linear ]
+							[ 1: decibels ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "normalize command" ]
+				[ type: llll ]
+			]
+		]
+		[ gain
+			[ description: "Audio process command for modifying a buffer's gain. See #process." ]
+			[ arguments:
+				[ required:
+					[ "@gain ?"
+						[ description: "gain amount, as either a single number or envelope." ]
+						[ type: int/float/llll ]
+					]
+				]
+				[ optional:
+					[ @resamplingfiltersize
+						[ description: "resampling filter size, in samples." ]
+						[ type: int ]
+						[ default: 11 ]
+					]
+					[ @resamplingmode
+						[ description: "resampling mode." ]
+						[ type: symbol ]
+						[ default: 'sinc' ]
+						[ options:
+							[ 'sinc' ]
+							[ 'nearest neighbor' ]
+							[ 'sample and hold' ]
+							[ 'linear' ]
+							[ 'quad' ]
+							[ 'cubic' ]
+						]
+					]
+					[ @ampunit
+						[ description: "amplitude unit." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: linear ]
+							[ 1: decibels ]
+						]
+					]
+					[ @envampunit
+						[ description: "amplitude unit for @gain envelope." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: linear ]
+							[ 1: decibels ]
+						]
+					]
+					[ @envtimeunit
+						[ description: "time unit for @gain envelope." ]
+						[ type: int ]
+						[ default: 2 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "gain command" ]
+				[ type: llll ]
+			]
+		]
+		[ dynamics
+			[ description: "Audio process command for applying simple compression to a buffer. See #process." ]
+			[ arguments:
+				[ optional:
+					[ @attack
+						[ description: "attack time." ]
+						[ type: int/float ]
+						[ default: 10 ]
+					]
+					[ @release
+						[ description: "release time." ]
+						[ type: int/float ]
+						[ default: 50 ]
+					]
+					[ @knee
+						[ description: "knee width." ]
+						[ type: int/float ]
+						[ default: 0.7 ]
+					]
+					[ @makeup
+						[ description: "make-up gain." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+					[ @ratio
+						[ description: "compression ratio." ]
+						[ type: int/float ]
+						[ default: 1.5 ]
+					]
+					[ @thresh
+						[ description: "amplitude threshold." ]
+						[ type: int/float ]
+						[ default: -20 ]
+					]
+					[ @ampunit
+						[ description: "amplitude unit." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: linear ]
+							[ 1: decibels ]
+						]
+					]
+					[ @timeunit
+						[ description: "time unit." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "dynamics command" ]
+				[ type: llll ]
+			]
+		]
+	]
+	[ "audio generation"
+		[ importaudio
+			[ description: "Imports an audio file as a buffer." ]
+			[ arguments:
+				[ required:
+					[ "@path ?"
+						[ description: "input audio file path." ]
+						[ type: symbol ]
+					]
+				]
+			]
+			[ output:
+				[ description: buffer ]
+				[ type: llll ]
+			]
+		]
+		[ noise
+			[ description: "Generates white noise as a buffer." ]
+			[ arguments:
+				[ optional:
+					[ @duration
+						[ description: "buffer duration, in milliseconds" ]
+						[ type: int/float ]
+						[ default: 50 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "synthesized buffer" ]
+				[ type: llll ]
+			]
+		]
+		[ randosc
+			[ description: "Generates a random oscillator as a buffer." ]
+			[ arguments:
+				[ optional:
+					[ @frequency
+						[ description: "frequency, either as a single number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+						[ default: 440 ]
+					]
+					[ @duration
+						[ description: "buffer duration, in milliseconds" ]
+						[ type: int/float ]
+						[ default: 50 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "synthesized buffer" ]
+				[ type: llll ]
+			]
+		]
+		[ cycle
+			[ description: "Generates a sinusoidal oscillator as a buffer." ]
+			[ arguments:
+				[ optional:
+					[ @frequency
+						[ description: "frequency, either as a single number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+						[ default: 440 ]
+					]
+					[ @duration
+						[ description: "buffer duration, in milliseconds" ]
+						[ type: int/float ]
+						[ default: 50 ]
+					]
+					[ @phase
+						[ description: "initial phase, in the 0–1 range." ]
+						[ type: int/float ]
+						[ default: 0.5 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "synthesized buffer" ]
+				[ type: llll ]
+			]
+		]
+		[ rect
+			[ description: `Generates\ a\ bipolar\,\ anti-aliased\ rectangular\ (pulse)\ oscillator\ as\ a\ buffer. ]
+			[ arguments:
+				[ optional:
+					[ @frequency
+						[ description: "frequency, either as a single number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+						[ default: 440 ]
+					]
+					[ @duration
+						[ description: "buffer duration, in milliseconds" ]
+						[ type: int/float ]
+						[ default: 50 ]
+					]
+					[ @duty
+						[ description: "duty cycle in the range of 0-1, either as a number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+						[ default: 0.5 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "synthesized buffer" ]
+				[ type: llll ]
+			]
+		]
+		[ saw
+			[ description: "Generates a bipolar, anti-aliased sawtooth oscillator as a buffer." ]
+			[ arguments:
+				[ optional:
+					[ @frequency
+						[ description: "frequency, either as a single number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+						[ default: 440 ]
+					]
+					[ @duration
+						[ description: "buffer duration, in milliseconds" ]
+						[ type: int/float ]
+						[ default: 50 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "synthesized buffer" ]
+				[ type: llll ]
+			]
+		]
+		[ tri
+			[ description: "Generates a bipolar, anti-aliased triangular oscillator as a buffer." ]
+			[ arguments:
+				[ optional:
+					[ @frequency
+						[ description: "frequency, either as a single number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+						[ default: 440 ]
+					]
+					[ @duration
+						[ description: "buffer duration, in milliseconds" ]
+						[ type: int/float ]
+						[ default: 50 ]
+					]
+					[ @duty
+						[ description: "duty cycle in the range of 0-1, either as a number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+						[ default: 0.5 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "synthesized buffer" ]
+				[ type: llll ]
+			]
+		]
+		[ triangle
+			[ description: "Generates a triangular/ramp oscillator as a buffer." ]
+			[ arguments:
+				[ optional:
+					[ @frequency
+						[ description: "frequency, either as a single number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+						[ default: 440 ]
+					]
+					[ @duration
+						[ description: "buffer duration, in milliseconds" ]
+						[ type: int/float ]
+						[ default: 50 ]
+					]
+					[ @phase
+						[ description: "initial phase, in the 0-1 range." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+					[ @offset
+						[ description: "peak position offset, in the 0-1 range." ]
+						[ type: int/float ]
+						[ default: 0.5 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "synthesized buffer" ]
+				[ type: llll ]
+			]
+		]
+		[ phasor
+			[ description: "Generates a unipolar ramp oscillator as a buffer." ]
+			[ arguments:
+				[ optional:
+					[ @frequency
+						[ description: "frequency, either as a single number, envelope, or buffer." ]
+						[ type: int/float/llll ]
+						[ default: 440 ]
+					]
+					[ @duration
+						[ description: "buffer duration, in milliseconds" ]
+						[ type: int/float ]
+						[ default: 50 ]
+					]
+					[ @phase
+						[ description: "initial phase, in the 0-1 range." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+				]
+			]
+			[ output:
+				[ description: "synthesized buffer" ]
+				[ type: llll ]
+			]
+		]
+		[ envelope
+			[ description: "Generates an audio envelope as a buffer, given a single number or a breakpoint function." ]
+			[ arguments:
+				[ optional:
+					[ @envelope
+						[ description: "envelope, as either a single number or a breakpoint function." ]
+						[ type: int/float/llll ]
+						[ default: 0 ]
+					]
+					[ @duration
+						[ description: "envelope duration, in milliseconds" ]
+						[ type: int ]
+						[ default: 1000 ]
+					]
+				]
+			]
+			[ output:
+				[ description: envelope ]
+				[ type: llll ]
+			]
+		]
+		[ clicks
+			[ description: "Generates a buffer containing a set of clicks at specific onsets. Note that if the first onset value is 0, it might get silenced when the @fade argument in #render is non-zero." ]
+			[ arguments:
+				[ optional:
+					[ @onsets
+						[ description: "onset positions." ]
+						[ type: int/float/list ]
+						[ default: 0 ]
+					]
+					[ @gains
+						[ description: "click gains." ]
+						[ type: int/float/list ]
+						[ default: 1 ]
+					]
+					[ @impulse
+						[ description: "impulse, a list of audio samples." ]
+						[ type: int/float/list ]
+						[ default: 1 ]
+					]
+					[ @timeunit
+						[ description: "time unit." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+					[ @ampunit
+						[ description: "amplitude unit." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: linear ]
+							[ 1: decibels ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: "clicks buffer" ]
+				[ type: llll ]
+			]
+		]
+		[ frompartialtracks
+			[ description: "Converts a partial track analysis into a buffer." ]
+			[ arguments:
+				[ required:
+					[ "@frequencies ?"
+						[ description: ]
+						[ type: llll ]
+					]
+					[ "@magnitudes ?"
+						[ description: ]
+						[ type: llll ]
+					]
+					[ "@phases ?"
+						[ description: ]
+						[ type: llll ]
+					]
+				]
+				[ optional:
+					[ @framesize
+						[ description: ]
+						[ type: int ]
+						[ default: 2048 ]
+					]
+					[ @hopsize
+						[ description: ]
+						[ type: int ]
+						[ default: 512 ]
+					]
+					[ @ampunit
+						[ description: "amplitude unit." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: linear ]
+							[ 1: decibels ]
+						]
+					]
+					[ @antimeunit
+						[ description: "analysis time unit." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+					[ @angleunit
+						[ description: "angle unit." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: 'radians' ]
+							[ 1: 'degrees' ]
+							[ 2: 'turns' ]
+						]
+					]
+					[ @frequnit
+						[ description: "unit for frequency components in @func." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: Hertz ]
+							[ 1: BPM ]
+							[ 2: midicents ]
+							[ 3: MIDI ]
+						]
+					]
+				]
+			]
+			[ output:
+				[ description: buffer ]
+				[ type: llll ]
+			]
+		]
+	]
+	[ "audio analysis"
+		[ analyze
+			[ description: `Applies\ a\ sequence\ of\ audio\ analysis\ operations\ to\ the\ input\ buffer\,\ via\ audio\ descriptors.\ These\ descriptors\ are\ generated\ through\ functions\ (e.g.\,\ see\ #flux\,\ #dissonance\,\ #spectrum)\,\ which\ contain\ the\ parameters\ for\ that\ specific\ audio\ analysis. ]
+			[ arguments:
+				[ required:
+					[ "@buffer ?"
+						[ description: "buffer to analyze." ]
+						[ type: llll ]
+					]
+					[ "@descriptors ?"
+						[ description: "list of audio descriptors." ]
+						[ type: llll ]
+					]
+				]
+				[ optional:
+					[ @winstartfromzero
+						[ description: "center first window at @framesize / 2 instead of 0." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @framesize
+						[ description: "analysis frame size or window size." ]
+						[ type: int ]
+						[ default: 2048 ]
+					]
+					[ @hopsize
+						[ description: "analysis hop size." ]
+						[ type: int ]
+						[ default: 1024 ]
+					]
+					[ @numframes
+						[ description: "number of analysis frames." ]
+						[ type: int/symbol ]
+						[ default: 'auto' ]
+						[ options:
+							[ 'auto': "infer from @framesize and @hopsize." ]
+							[ >0: "ignores @hopsize." ]
+						]
+					]
+					[ @overlap
+						[ description: "overlap factor between analysis window size and hop size." ]
+						[ type: int ]
+						[ default: 1 ]
+					]
+					[ @wintype
+						[ description: "window type" ]
+						[ type: int ]
+						[ default: 'hann' ]
+						[ options:
+							[ 'rectangular' ]
+							[ 'triangular' ]
+							[ 'sine' ]
+							[ 'hann' ]
+							[ 'hamming' ]
+							[ 'blackman' ]
+							[ 'nuttall' ]
+							[ 'blackmannuttall' ]
+							[ 'blackmanharris' ]
+							[ 'gaussian' ]
+							[ 'sqrthann' ]
+							[ 'sqrthamming' ]
+						]
+					]
+					[ @winnormalized
+						[ description: "normalize analysis windows to have an area of 1 and then scaled by a factor of 2." ]
+						[ type: int ]
+						[ default: 1 ]
+					]
+					[ @envattack
+						[ description: "attack time for computing envelopes." ]
+						[ type: int/float ]
+						[ default: 10 ]
+					]
+					[ @envrelease
+						[ description: "release time for computing envelopes." ]
+						[ type: int ]
+						[ default: 100 ]
+					]
+					[ @onsetdetectionmethod
+						[ description: "onset detection method." ]
+						[ type: symbol ]
+						[ default: 'complex' ]
+						[ options:
+							[ 'hfc': "high frequency content." ]
+							[ 'complex': "the complex-domain spectral difference function." ]
+							[ 'complex_phase': "the simplified complex-domain spectral difference function taking into account phase changes, weighted by magnitude." ]
+							[ 'flux': "spectral flux." ]
+							[ 'melflux': "similar to spectral flux, but using half-rectified energy changes in Mel-frequency bands." ]
+							[ 'rms': "difference function, measuring the half-rectified change of the RMS of the magnitude spectrum." ]
+						]
+					]
+					[ @peaksmaxnum
+						[ description: "maximum number of peaks for peaks analyis." ]
+						[ type: int ]
+						[ default: 100 ]
+					]
+					[ @peaksorderby
+						[ description: "ordering method of the peaks in the peaks analysis." ]
+						[ type: symbol ]
+						[ default: 'complex' ]
+						[ options:
+							[ 'hfc': "high frequency content." ]
+							[ 'complex': "the complex-domain spectral difference function." ]
+							[ 'complex_phase': "the simplified complex-domain spectral difference function taking into account phase changes, weighted by magnitude." ]
+							[ 'flux': "spectral flux." ]
+							[ 'melflux': "similar to spectral flux, but using half-rectified energy changes in Mel-frequency bands." ]
+							[ 'rms': "difference function, measuring the half-rectified change of the RMS of the magnitude spectrum." ]
+						]
+					]
+					[ @peaksmagthresh
+						[ description: "magnitude threshold for the peaks analyis." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+					[ @peaksmaxfreq
+						[ description: "maximum frequency for the peaks analyis." ]
+						[ type: int/float ]
+						[ default: 5000 ]
+					]
+					[ @peaksminfreq
+						[ description: "minimum frequency for the peaks analyis." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+					[ @summary
+						[ description: "summarization mode, for global analyses that are computed on a frame-by-frame basis." ]
+						[ type: int ]
+						[ default: 3 ]
+						[ options:
+							[ 0: use first frame. ]
+							[ 1: use last frame. ]
+							[ 2: use middle frame. ]
+							[ 3: average through frames. ]
+							[ 4: median through frames. ]
+							[ 5: mode through frames. ]
+						]
+					]
+					[ @summaryweight
+						[ description: "summarization weight, when @summary is 4." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: none. ]
+							[ 1: rms. ]
+							[ 2: loudness. ]
+						]
+					]
+					[ @summarypositive
+						[ description: "only summarize with positive values." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @ampunit
+						[ description: "amplitude unit" ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: linear ]
+							[ 1: decibels ]
+						]
+					]
+					[ @antimeunit
+						[ description: "analysis time unit" ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+						]
+					]
+					[ @envtimeunit
+						[ description: "envelope time unit" ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+					[ @frequnit
+						[ description: "frequency unit" ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: Hertz ]
+							[ 1: BPM ]
+							[ 2: midicents ]
+							[ 3: MIDI ]
+						]
+					]
+					[ @pitchunit
+						[ description: "pitch unit" ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: midicents ]
+							[ 1: MIDI ]
+							[ 2: Hertz ]
+							[ 3: ratio ]
+						]
+					]
+					[ @timeunit
+						[ description: "time unit"
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+						[ type: int ]
+						[ default: 0 ]
+					]
+					[ @yinmaxfreq
+						[ description: "maximum frequency for the YIN analysis." ]
+						[ type: int/float ]
+						[ default: 22050 ]
+					]
+					[ @yinminfreq
+						[ description: "minimum frequency for the YIN analysis." ]
+						[ type: int/float ]
+						[ default: 20 ]
+					]
+					[ @yintolerance
+						[ description: "tolerance for the YIN analysis." ]
+						[ type: int/float ]
+						[ default: 1 ]
+					]
+					[ @frametime
+						[ description: "retrieve analysis window time positions as a separate feature." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @bufinterp
+						[ description: "interpolation mode" ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: no interpolation ]
+							[ 1: lower neighbor ]
+							[ 2: linear ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'analyze' ]
+			]
+			[ output:
+				[ description: "analyzed buffer" ]
+				[ type: llll ]
+			]
+		]
+		[ effectiveduration
+			[ description: "Audio descriptor to compute the effective duration of an envelope signal. The effective duration is a measure of the time the signal is perceptually meaningful. This is approximated by the time the envelope is above or equal to a given threshold and is above the -90db noise floor. This measure allows to distinguish percussive sounds from sustained sounds but depends on the signal length. By default, this algorithm uses 40% of the envelope maximum as the threshold which is suited for short sounds. Note, that the 0% thresold corresponds to the duration of signal above -90db noise floor, while the 100% thresold corresponds to the number of times the envelope takes its maximum value. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @samplerate
+						[ description: "sampling rate." ]
+						[ type: int ]
+						[ default: 44100 ]
+					]
+					[ @thresholdratio
+						[ description: "ratio of the envelope maximum to be used as the threshold." ]
+						[ type: int/float ]
+						[ default: 0.4 ]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'effectiveduration' ]
+			]
+			[ output:
+				[ description: "effectiveduration descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ envmaxtime
+			[ description: "Audio descriptor to extract the time at which the global maxima of the buffer's envelope occurs. See #analyze." ]
+			[ arguments: none ]
+			[ "resulting buffer keys:"
+				[ 'envmaxtime' ]
+			]
+			[ output:
+				[ description: "envmaxtime descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ envmintime
+			[ description: "Audio descriptor to extract the time at which the global minima of the buffer's envelope occurs. See #analyze." ]
+			[ arguments: none ]
+			[ "resulting buffer keys:"
+				[ 'envmintime' ]
+			]
+			[ output:
+				[ description: "envmintime descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ pitchyin
+			[ description: "Audio descriptor to estimate the fundamental frequency of a monophonic buffer. It is an implementation of the Yin algorithm for computations in the time domain. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @framesize
+						[ description: "number of samples in the input frame." ]
+						[ type: int ]
+						[ default: 2048 ]
+					]
+					[ @interpolate
+						[ description: "enable interpolation." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @maxfrequency
+						[ description: "the maximum allowed frequency." ]
+						[ type: int/float ]
+						[ default: 22050 ]
+					]
+					[ @minfrequency
+						[ description: "the minimum allowed frequency." ]
+						[ type: int/float ]
+						[ default: 20 ]
+					]
+					[ @samplerate
+						[ description: "sampling rate of the input audio." ]
+						[ type: int ]
+						[ default: 44100 ]
+					]
+					[ @tolerance
+						[ description: "tolerance for peak detection." ]
+						[ type: int/float ]
+						[ default: 0.15 ]
+					]
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'pitchyin' ]
+				[ 'pitchyin_confidence' ]
+			]
+			[ output:
+				[ description: "pitchyin descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ spectralkurtosis
+			[ description: "Audio descriptor to compute the spectral kurtosis of a buffer. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'spectralkurtosis' ]
+			]
+			[ output:
+				[ description: "spectralkurtosis descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ temporalkurtosis
+			[ description: "Audio descriptor to compute the temporal kurtosis of a buffer. See #analyze." ]
+			[ arguments: none ]
+			[ "resulting buffer keys:"
+				[ 'temporalkurtosis' ]
+			]
+			[ output:
+				[ description: "temporalkurtosis descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ spectralskewness
+			[ description: "Audio descriptor to compute the spectral skewness of a buffer. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'spectralskewness' ]
+			]
+			[ output:
+				[ description: "spectralskewness descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ temporalskewness
+			[ description: "Audio descriptor to compute the temporal skewness of a buffer. See #analyze." ]
+			[ arguments: none ]
+			[ "resulting buffer keys:"
+				[ 'temporalskewness' ]
+			]
+			[ output:
+				[ description: "temporalskewness descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ spectralspread
+			[ description: "Audio descriptor to compute the spectral spread of a buffer. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'spectralspread' ]
+			]
+			[ output:
+				[ description: "spectralspread descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ temporalspread
+			[ description: "Audio descriptor to compute the temporal spread of a buffer. See #analyze." ]
+			[ arguments: none ]
+			[ "resulting buffer keys:"
+				[ 'temporalspread' ]
+			]
+			[ output:
+				[ description: "temporalspread descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ spectralvariance
+			[ description: "Audio descriptor to compute the spectral variance of a buffer. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'spectralvariance' ]
+			]
+			[ output:
+				[ description: "spectralvariance descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ temporalvariance
+			[ description: "Audio descriptor to compute the temporal variance of a buffer. See #analyze." ]
+			[ arguments: none ]
+			[ "resulting buffer keys:"
+				[ 'temporalvariance' ]
+			]
+			[ output:
+				[ description: "temporalvariance descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ energy
+			[ description: "Audio descriptor to compute the energy of a buffer. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'energy' ]
+			]
+			[ output:
+				[ description: "energy descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ energyband
+			[ description: "Audio descriptor to compute energy in a given frequency band of a spectrum including both start and stop cutoff frequencies. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @startcutofffrequency
+						[ description: "start frequency from which to sum the energy." ]
+						[ type: int ]
+						[ default: 0 ]
+					]
+					[ @stopcutofffrequency
+						[ description: "stop frequency to which to sum the energy." ]
+						[ type: int ]
+						[ default: 100 ]
+					]
+					[ @samplerate
+						[ description: "audio sampling rate." ]
+						[ type: int ]
+						[ default: 44100 ]
+					]
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'energyband' ]
+			]
+			[ output:
+				[ description: "energyband descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ dissonance
+			[ description: "Audio descriptor to compute the sensory dissonance of a buffer. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'dissonance' ]
+			]
+			[ output:
+				[ description: "dissonance descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ strongpeak
+			[ description: "Audio descriptor to compute the strong peak of a buffer, defined as the ratio between the spectrum's maximum peak's magnitude and the 'bandwidth' of the peak above a threshold — i.e., half its amplitude. This ratio reveals whether the spectrum presents a very 'pronounced' maximum peak — i.e., the thinner and the higher the maximum of the spectrum is, the higher the ratio value. Note that 'bandwidth' is defined as the width of the peak in the log10-frequency domain. Using the log10-frequency domain allows this algorithm to compare strong peaks at lower frequencies with those from higher frequencies. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'strongpeak' ]
+			]
+			[ output:
+				[ description: "strongpeak descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ inharmonicity
+			[ description: "Audio descriptor to calculate the inharmonicity of a buffer. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'inharmonicity' ]
+			]
+			[ output:
+				[ description: "inharmonicity descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ zerocrossingrate
+			[ description: "Audio descriptor to compute the zero-crossing rate of a buffer, defined as the number of sign changes between consecutive signal values divided by the total number of values. Noisy signals tend to have higher zero-crossing rate. In order to avoid small variations around zero caused by noise, a threshold around zero is given to consider a valid zerocrosing whenever the boundary is crossed. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @threshold
+						[ description: "the threshold which will be taken as the zero axis in both positive and negative sign." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'zerocrossingrate' ]
+			]
+			[ output:
+				[ description: "zerocrossingrate descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ strongdecay
+			[ description: "Audio descriptor to compute the strong decay of a buffer. The strong decay is built from the non-linear combination of the signal energy and the signal temporal centroid, the latter being the balance of the absolute value of the signal. A signal containing a temporal centroid near its start boundary and a strong energy is said to have a strong decay. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'strongdecay' ]
+			]
+			[ output:
+				[ description: "strongdecay descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ spectrum
+			[ description: `Audio\ descriptor\ to\ compute\ the\ magnitude\ spectrum\ of\ a\ buffer.\ The\ resulting\ magnitude\ spectrum\ has\ a\ size\ which\ is\ half\ the\ size\ of\ the\ input\ array\ plus\ one.\ Bins\ contain\ raw\ (linear)\ magnitude\ values.\ See\ #analyze. ]
+			[ arguments:
+				[ optional:
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'spectrum' ]
+			]
+			[ output:
+				[ description: "spectrum descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ rhythm
+			[ description: "Audio descriptor for extract the beat positions and estimate their confidence as well as tempo in bpm for a buffer. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @maxtempo
+						[ description: "fastest tempo to detect, between 60 and 250." ]
+						[ type: int ]
+						[ default: 208 ]
+					]
+					[ @mintempo
+						[ description: "slowest tempo to detect, between 40 and 180." ]
+						[ type: int ]
+						[ default: 40 ]
+					]
+					[ @method
+						[ description: "method used for beat tracking." ]
+						[ type: symbol ]
+						[ default: 'multifeature' ]
+						[ options:
+							[ 'degara': degara method ]
+							[ 'multifeature': multifeature method ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'rhythm_bpm' ]
+				[ 'rhythm_ticks' ]
+				[ 'rhythm_estimates' ]
+				[ 'rhythm_intervals' ]
+			]
+			[ output:
+				[ description: "rhythm descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ logattack
+			[ description: `Audio\ descriptor\ to\ compute\ the\ log\ (base\ 10)\ of\ the\ attack\ time\ of\ buffer\'s\ envelope.\ The\ attack\ time\ is\ defined\ as\ the\ time\ duration\ from\ when\ the\ sound\ becomes\ perceptually\ audible\ to\ when\ it\ reaches\ its\ maximum\ intensity.\ By\ default\,\ the\ start\ of\ the\ attack\ is\ estimated\ as\ the\ point\ where\ the\ signal\ envelope\ reaches\ 20%\ of\ its\ maximum\ value\ in\ order\ to\ account\ for\ possible\ noise\ presence.\ Also\ by\ default\,\ the\ end\ of\ the\ attack\ is\ estimated\ as\ as\ the\ point\ where\ the\ signal\ envelope\ has\ reached\ 90%\ of\ its\ maximum\ value\,\ in\ order\ to\ account\ for\ the\ possibility\ that\ the\ max\ value\ occurres\ after\ the\ log-attack\,\ as\ in\ trumpet\ sounds.\ See\ #analyze. ]
+			[ arguments: none ]
+			[ "resulting buffer keys:"
+				[ 'logattack' ]
+				[ 'logattack_start' ]
+				[ 'logattack_stop' ]
+			]
+			[ output:
+				[ description: "logattack descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ chordsdetection
+			[ description: "Audio descriptor to perform chord estimation on a buffer. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'chordsdetection' ]
+			]
+			[ output:
+				[ description: "chordsdetection descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ pitchmelodia
+			[ description: "Audio descriptor to estimate the fundamental frequency corresponding to the melody of a monophonic music signal based on the MELODIA algorithm. While the algorithm is originally designed to extract the predominant melody from polyphonic music, this implementation is adapted for monophonic signals. The approach is based on the creation and characterization of pitch contours, time continuous sequences of pitch candidates grouped using auditory streaming cues. It is strongly advised to use the default parameter values which are optimized for this task, except for @minfrequency and @maxfrequency, which will be context-dependent. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @binresolution
+						[ description: "salience function bin resolution, in cents." ]
+						[ type: int ]
+						[ default: 10 ]
+					]
+					[ @filteriterations
+						[ description: "number of iterations for the octave errors / pitch outlier filtering process." ]
+						[ type: int ]
+						[ default: 3 ]
+					]
+					[ @framesize
+						[ description: "frame size for computing pitch salience." ]
+						[ type: int ]
+						[ default: 2048 ]
+					]
+					[ @guessunvoiced
+						[ description: "estimate pitch for non-voiced segments." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @harmonicweight
+						[ description: "weight decay ratio between two consequent harmonics. Use 1 for no decay." ]
+						[ type: int/float ]
+						[ default: 0.8 ]
+					]
+					[ @hopsize
+						[ description: "hop size with which the pitch salience function was computed." ]
+						[ type: int ]
+						[ default: 1024 ]
+					]
+					[ @magnitudecompression
+						[ description: "magnitude compression parameter for the salience function." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: "maximum compression" ]
+							[ 1: "no compression" ]
+						]
+					]
+					[ @magnitudethreshold
+						[ description: "spectral peak magnitude threshold, in decibels." ]
+						[ type: int ]
+						[ default: 40 ]
+					]
+					[ @maxfrequency
+						[ description: "the maximum allowed frequency for salience function peaks." ]
+						[ type: int/float ]
+						[ default: 20000 ]
+					]
+					[ @minduration
+						[ description: "the minimum allowed contour duration." ]
+						[ type: int ]
+						[ default: 100 ]
+					]
+					[ @minfrequency
+						[ description: "the minimum allowed frequency for salience function peaks." ]
+						[ type: int/float ]
+						[ default: 40 ]
+					]
+					[ @numberharmonics
+						[ description: "number of considered harmonics." ]
+						[ type: int ]
+						[ default: 20 ]
+					]
+					[ @peakdistributionthreshold
+						[ description: "allowed deviation below the peak salience mean over all frames." ]
+						[ type: int/float ]
+						[ default: 0.9 ]
+					]
+					[ @peakframethreshold
+						[ description: "per-frame salience threshold factor." ]
+						[ type: int/float ]
+						[ default: 0.9 ]
+					]
+					[ @pitchcontinuity
+						[ description: "maximum allowed pitch change during 1 ms time period, in cents." ]
+						[ type: int/float ]
+						[ default: 27.5625 ]
+					]
+					[ @referencefrequency
+						[ description: "the reference frequency to cent conversion corresponding to the 0th cent bin." ]
+						[ type: int/float ]
+						[ default: 55 ]
+					]
+					[ @samplerate
+						[ description: "the sampling rate of the audio signal." ]
+						[ type: int ]
+						[ default: 44100 ]
+					]
+					[ @timecontinuity
+						[ description: "maximum allowed gap duration for a pitch contour, in milliseconds." ]
+						[ type: int ]
+						[ default: 100 ]
+					]
+					[ @polyphonic
+						[ description: "optimize for polyphonic buffer." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @voicevibrato
+						[ description: "detect voice vibrato, when @polyphonic is 1." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @voicingtolerance
+						[ description: "voicing tolerance between -1 and 1.4, when @polyphonic is 1." ]
+						[ type: int/float ]
+						[ default: 0.2 ]
+					]
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'pitchmelodia' ]
+				[ 'pitchmelodia_confidence' ]
+			]
+			[ output:
+				[ description: "pitchmelodia descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ mfcc
+			[ description: "Audio descriptor to compute the mel-frequency cepstrum coefficients of a buffer's spectrum. As there is no standard implementation, the MFCC-FB40 is used by default. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @dcttype
+						[ description: "DCT type." ]
+						[ type: int ]
+						[ default: 2 ]
+					]
+					[ @highfrequencybound
+						[ description: "upper bound of the frequency range, in Hz." ]
+						[ type: int/float ]
+						[ default: 11000 ]
+					]
+					[ @inputsize
+						[ description: "size of input spectrum." ]
+						[ type: int ]
+						[ default: 1025 ]
+					]
+					[ @liftering
+						[ description: "liftering coefficient. Use '0' to bypass it." ]
+						[ type: int ]
+						[ default: 0 ]
+					]
+					[ @logtype
+						[ description: "logarithmic compression type." ]
+						[ type: symbol ]
+						[ default: 'dbamp' ]
+						[ options:
+							[ 'natural' ]
+							[ 'dbpow' ]
+							[ 'dbamp' ]
+							[ 'log' ]
+						]
+					]
+					[ @lowfrequencybound
+						[ description: "lower bound of the frequency range, in Hz." ]
+						[ type: float ]
+						[ default: 0 ]
+					]
+					[ @normalize
+						[ description: "spectrum bin weights to use for each mel band." ]
+						[ type: symbol ]
+						[ default: 'unit_sum' ]
+						[ options:
+							[ 'unit_sum' ]
+							[ 'unit_tri' ]
+							[ 'unit_max' ]
+						]
+					]
+					[ @numberbands
+						[ description: "number of mel-bands in the filter." ]
+						[ type: int ]
+						[ default: 40 ]
+					]
+					[ @numbercoefficients
+						[ description: "number of output mel coefficients." ]
+						[ type: int ]
+						[ default: 13 ]
+					]
+					[ @samplerate
+						[ description: "sampling rate of the audio signal, in Hz." ]
+						[ type: int ]
+						[ default: 44100 ]
+					]
+					[ @silencethreshold
+						[ description: "silence threshold for computing log-energy bands." ]
+						[ type: int/float ]
+						[ default: 0.0000000001 ]
+					]
+					[ @type
+						[ description: "use magnitude or power spectrum." ]
+						[ type: symbol ]
+						[ default: 'power' ]
+						[ options:
+							[ 'magnitude' ]
+							[ 'power' ]
+						]
+					]
+					[ @warpingformula
+						[ description: "scale implementation type." ]
+						[ type: symbol ]
+						[ default: 'htkmel' ]
+						[ options:
+							[ 'slaneymel' ]
+							[ 'htkmel' ]
+						]
+					]
+					[ @weighting
+						[ description: "type of weighting function for determining triangle area." ]
+						[ type: symbol ]
+						[ default: 'warping' ]
+						[ options:
+							[ 'warping' ]
+							[ 'linear' ]
+						]
+					]
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'mfcc_bands' ]
+				[ 'mfcc' ]
+			]
+			[ output:
+				[ description: "mfcc descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ flux
+			[ description: "Audio descriptor to compute the spectral flux of a buffer. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @halfrectify
+						[ description: "half-rectify the differences in each spectrum bin." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @norm
+						[ description: "norm to use for difference computation." ]
+						[ type: symbol ]
+						[ default: 'L2' ]
+						[ options:
+							[ 'L1': "L1 norm" ]
+							[ 'L2': "L2 norm" ]
+						]
+					]
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'flux' ]
+			]
+			[ output:
+				[ description: "flux descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ larm
+			[ description: "Audio descriptor to estimate the long-term loudness of a buffer. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @attacktime
+						[ description: "attack time of the first order lowpass in the attack phase." ]
+						[ type: int ]
+						[ default: 10 ]
+					]
+					[ @power
+						[ description: "power used for averaging." ]
+						[ type: int/float ]
+						[ default: 1.5 ]
+					]
+					[ @releasetime
+						[ description: "release time of the first order lowpass in the release phase." ]
+						[ type: int ]
+						[ default: 1500 ]
+					]
+					[ @samplerate
+						[ description: "sampling rate." ]
+						[ type: int ]
+						[ default: 44100 ]
+					]
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'larm' ]
+			]
+			[ output:
+				[ description: "larm descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ spectralcentroid
+			[ description: "Audio descriptor to calculate the spectral centroid of a buffer, defined as the 'center of mass' of the spectrum, in Hertz. Perceptually, it has a robust connection with the impression of 'brightness' of a sound, and therefore is used to characterize musical timbre. It is calculated as the weighted mean of the frequencies present in the signal, with their magnitudes as the weights. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'spectralcentroid' ]
+			]
+			[ output:
+				[ description: "spectralcentroid descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ temporalcentroid
+			[ description: "Audio descriptor to calculate the temporal centroid of a buffer, defined as the point in time that is a temporal balancing point of the sound's energy. See #analyze." ]
+			[ arguments: none ]
+			[ "resulting buffer keys:"
+				[ 'temporalcentroid' ]
+			]
+			[ output:
+				[ description: "temporalcentroid descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ spectralflatness
+			[ description: "Audio descriptor to calculate the spectral flatness of a buffer, defined as the ratio between the spectrum's geometric mean and arithmetic mean. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'spectralflatness' ]
+			]
+			[ output:
+				[ description: "spectralflatness descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ temporalflatness
+			[ description: "Audio descriptor to calculate the temporal flatness of a buffer, defined as the ratio between the buffer envelope's geometric mean and arithmetic mean. Flatness is undefined for empty input and negative values, therefore an exception is thrown in any both cases. See #analyze." ]
+			[ arguments: none ]
+			[ "resulting buffer keys:"
+				[ 'temporalflatness' ]
+			]
+			[ output:
+				[ description: "temporalflatness descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ barkbands
+			[ description: "Audio descriptor to compute the Bark bands of a spectrum. For each bark band the power-spectrum — i.e., mag-squared — is summed. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @numberbands
+						[ description: "number of desired barkbands." ]
+						[ type: int ]
+						[ default: 27 ]
+					]
+					[ @samplerate
+						[ description: "sampling rate." ]
+						[ type: int ]
+						[ default: 44100 ]
+					]
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'barkbands' ]
+			]
+			[ output:
+				[ description: "barkbands descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ beatsloudness
+			[ description: "Audio descriptor to compute the spectrum energy of beats in an audio signal given their positions. The energy is computed both on the whole frequency range and for each of the specified frequency bands. See #analyze." ]
+			[ arguments:
+				[ required:
+					[ "@beats ?"
+						[ description: "duration of the window in which the beat will be restricted." ]
+						[ type: list ]
+					]
+				]
+				[ optional:
+					[ @beatduration
+						[ description: "duration of the window in which to look for the beginning of the beat, centered around the values in @beats." ]
+						[ type: int/float ]
+						[ default: 0.05 ]
+					]
+					[ @beatwindowduration
+						[ description: "list of beat positions." ]
+						[ type: int/float ]
+						[ default: 0.1 ]
+					]
+					[ @frequencybands
+						[ description: "list of bands to compute energy ratios." ]
+						[ type: list ]
+						[ default: 20 150 400 3200 7000 22000 ]
+					]
+					[ @samplerate
+						[ description: "audio sampling rate." ]
+						[ type: int ]
+						[ default: 44100 ]
+					]
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'beatsloudness' ]
+				[ 'beatsloudness_bandratio' ]
+			]
+			[ output:
+				[ description: "beatsloudness descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ bfcc
+			[ description: "Audio descriptor to compute the bark-frequency cepstrum coefficients of a spectrum. Bark bands and their subsequent usage in cepstral analysis have shown to be useful in percussive content. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @dcttype
+						[ description: "DCT type." ]
+						[ type: int ]
+						[ default: 2 ]
+					]
+					[ @highfrequencybound
+						[ description: "upper bound of the frequency range." ]
+						[ type: int/float ]
+						[ default: 11000 ]
+					]
+					[ @inputsize
+						[ description: "size of input spectrum." ]
+						[ type: int ]
+						[ default: 1025 ]
+					]
+					[ @liftering
+						[ description: "liftering coefficient. Use 0 to bypass it." ]
+						[ type: int ]
+						[ default: 0 ]
+					]
+					[ @logtype
+						[ description: "logarithmic compression type." ]
+						[ type: int ]
+						[ default: 'dbamp' ]
+						[ options:
+							[ 'dbpow': "Use if working with power." ]
+							[ 'dbamp': "Use if working with magnitudes." ]
+						]
+					]
+					[ @lowfrequencybound
+						[ description: "lower bound of the frequency range." ]
+						[ type: int ]
+						[ default: 0 ]
+					]
+					[ @normalize
+						[ description: "normalization mode" ]
+						[ type: int ]
+						[ default: 'unit_sum' ]
+						[ options:
+							[ 'unit_max': "makes the vertex of all the triangles equal to 1." ]
+							[ 'unit_sum': "makes the area of all the triangles equal to 1." ]
+						]
+					]
+					[ @numberbands
+						[ description: "number of bark bands in the filter." ]
+						[ type: int ]
+						[ default: 40 ]
+					]
+					[ @numbercoefficients
+						[ description: "number of output cepstrum coefficients." ]
+						[ type: int ]
+						[ default: 13 ]
+					]
+					[ @samplerate
+						[ description: "sampling rate of the audio signal." ]
+						[ type: int ]
+						[ default: 44100 ]
+					]
+					[ @type
+						[ description: "magnitude or power spectrum." ]
+						[ type: int ]
+						[ default: 'power' ]
+						[ options:
+							[ 'power' ]
+							[ 'magnitude' ]
+						]
+					]
+					[ @weighting
+						[ description: "type of weighting function for determining triangle area." ]
+						[ type: int ]
+						[ default: 'warping' ]
+						[ options:
+							[ 'warping' ]
+							[ 'linear' ]
+						]
+					]
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'bfcc_bands' ]
+				[ 'bfcc' ]
+			]
+			[ output:
+				[ description: "bfcc descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ rolloff
+			[ description: "Audio descriptor to compute the roll-off frequency of a spectrum. The roll-off frequency is defined as the frequency under which some percentage — i.e., cutoff — of the total energy of the spectrum is contained. The roll-off frequency can be used to distinguish between harmonic — i.e., below roll-off — and noisy sounds — i.e., above roll-off. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @cutoff
+						[ description: "the ratio of total energy to attain before yielding the roll-off frequency." ]
+						[ type: float ]
+						[ default: 0.85 ]
+					]
+					[ @samplerate
+						[ description: "sampling rate." ]
+						[ type: int ]
+						[ default: 44100 ]
+					]
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'rolloff' ]
+			]
+			[ output:
+				[ description: "rolloff descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ maxmagfreq
+			[ description: "Audio descriptor to compute the frequency with the largest magnitude in a spectrum. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @samplerate
+						[ description: "sampling rate." ]
+						[ type: int ]
+						[ default: 44100 ]
+					]
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'maxmagfreq' ]
+			]
+			[ output:
+				[ description: "maxmagfreq descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ onsets
+			[ description: "Audio descriptor to compute the onset positions in a buffer. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @alpha
+						[ description: "proportion of the mean included to reject smaller peaks — filters very short onsets." ]
+						[ type: float ]
+						[ default: 0.1 ]
+					]
+					[ @delay
+						[ description: "number of frames used to compute the threshold — size of short-onset filter." ]
+						[ type: int ]
+						[ default: 5 ]
+					]
+					[ @framerate
+						[ description: "frames per second." ]
+						[ type: float ]
+						[ default: 86.1328 ]
+					]
+					[ @silencethreshold
+						[ description: "threshold for silence." ]
+						[ type: float ]
+						[ default: 0.02 ]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'onsets' ]
+			]
+			[ output:
+				[ description: "onsets descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ onsetdetection
+			[ description: "Audio descriptor to compute buffer onsets, given various onset detection functions. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @method
+						[ description: "the method used for onset detection." ]
+						[ type: list ]
+						[ default: 'hfc' ]
+						[ options:
+							[ 'hfc': "high frequency content." ]
+							[ 'complex': "the complex-domain spectral difference function." ]
+							[ 'complex_phase': "the simplified complex-domain spectral difference function taking into account phase changes, weighted by magnitude." ]
+							[ 'flux': "spectral flux." ]
+							[ 'melflux': "similar to spectral flux, but using half-rectified energy changes in Mel-frequency bands." ]
+							[ 'rms': "difference function, measuring the half-rectified change of the RMS of the magnitude spectrum." ]
+						]
+					]
+					[ @samplerate
+						[ description: "sampling rate." ]
+						[ type: int ]
+						[ default: 44100 ]
+					]
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+							[ 3: buffer ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'onsetdetection' ]
+			]
+			[ output:
+				[ description: "onsetdetection descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ tonalkey
+			[ description: "Audio descriptor to perform tonal key signature estimation on a buffer. See #analyze." ]
+			[ arguments:
+				[ optional:
+					[ @numharmonics
+						[ description: "number of harmonics that should contribute to the polyphonic profile." ]
+						[ type: int ]
+						[ default: 4 ]
+					]
+					[ @pcpsize
+						[ description: "pitch class profile size." ]
+						[ type: int ]
+						[ default: 36 ]
+					]
+					[ @profiletype
+						[ description: "the type of polyphic profile to use for correlation calculation." ]
+						[ type: list ]
+						[ default: 'bgate' ]
+						[ options:
+							[ 'diatonic': "binary profile with diatonic notes of both modes." ]
+							[ "'tonic triad':" "just the notes of the major and minor chords. exclusively for testing." ]
+							[ 'krumhansl': "reference key profiles based on cognitive experiments — useful for pop music." ]
+							[ 'temperley': "key profiles extracted from corpus analysis of euroclassical music, especially in minor keys." ]
+							[ 'shaath': "profiles based on Krumhansl's specifically tuned to popular and electronic music." ]
+							[ 'noland': "profiles from Bach's 'Well Tempered Klavier'." ]
+							[ 'edma': "automatic profiles extracted from corpus analysis of EDM — better than Shaath's" ]
+							[ 'edmm': "same as edma, but manually tweaked according to heuristic observation." ]
+							[ 'braw': "profiles obtained by calculating the median profile for each mode from a subset of BeatPort dataset." ]
+							[ 'bgate': "same as braw but zeroing the 4 less relevant elements of each profile." ]
+						]
+					]
+					[ @slope
+						[ description: "value of the slope of the exponential harmonic contribution to the polyphonic profile." ]
+						[ type: int/float ]
+						[ default: 0.6 ]
+					]
+					[ @usemajmin
+						[ description: "use a third profile called 'majmin' for ambiguous tracks. Only avalable for the edma, bgate and braw profiles." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @usepolyphony
+						[ description: "enables the use of polyphonic profiles to define key profiles — this includes the contributions from triads as well as pitch harmonics." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @usethreechords
+						[ description: "consider only the 3 main triad chords of the key — i.e., T, D, SD — to build the polyphonic profiles." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @mode
+						[ description: "analysis mode." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: global ]
+							[ 1: time series ]
+							[ 2: time-tagged time series ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'tonalkey' ]
+			]
+			[ output:
+				[ description: "tonalkey descriptor" ]
+				[ type: llll ]
+			]
+		]
+		[ topartialtracks
+			[ description: "Converts a buffer into a partial track analysis." ]
+			[ arguments:
+				[ required:
+					[ "@buffer ?"
+						[ description: "buffer to analyze." ]
+						[ type: llll ]
+					]
+				]
+				[ optional:
+					[ @winstartfromzero
+						[ description: "first window starts at zero" ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+					[ @framesize
+						[ description: "window size, in samples." ]
+						[ type: int ]
+						[ default: 2048 ]
+					]
+					[ @hopsize
+						[ description: "hop size, in samples." ]
+						[ type: int ]
+						[ default: 512 ]
+					]
+					[ @freqdevoffset
+						[ description: "frequency deviation offset." ]
+						[ type: int ]
+						[ default: 20 ]
+					]
+					[ @freqdevslope
+						[ description: "frequency deviation slope." ]
+						[ type: int/float ]
+						[ default: 0.01 ]
+					]
+					[ @magnitudethreshold
+						[ description: "peak amplitude threshold." ]
+						[ type: float ]
+						[ default: 0.0002 ]
+					]
+					[ @maxfrequency
+						[ description: "max. frequency of the range to evaluate." ]
+						[ type: int/float ]
+						[ default: 22050 ]
+					]
+					[ @minfrequency
+						[ description: "min. frequency of the range to evaluate." ]
+						[ type: int/float ]
+						[ default: 0 ]
+					]
+					[ @maxpeaks
+						[ description: "max. number of returned peaks." ]
+						[ type: int ]
+						[ default: 100 ]
+					]
+					[ @maxnsines
+						[ description: "max. number of sines per frame." ]
+						[ type: int ]
+						[ default: 100 ]
+					]
+					[ @numframes
+						[ description: "number of frames." ]
+						[ type: int/symbol ]
+						[ default: 'auto' ]
+					]
+					[ @orderby
+						[ description: "ordering feature." ]
+						[ type: symbol ]
+						[ default: 'frequency' ]
+						[ options:
+							[ 'frequency' ]
+							[ 'magnitude' ]
+						]
+					]
+					[ @overlap
+						[ description: overlap. ]
+						[ type: int ]
+						[ default: 4 ]
+					]
+					[ @wintype
+						[ description: "window type." ]
+						[ type: symbol ]
+						[ default: 'hann' ]
+						[ options:
+							[ 'rectangular' ]
+							[ 'triangular' ]
+							[ 'sine' ]
+							[ 'hann' ]
+							[ 'hamming' ]
+							[ 'blackman' ]
+							[ 'nuttall' ]
+							[ 'blackmannuttall' ]
+							[ 'blackmanharris' ]
+							[ 'gaussian' ]
+							[ 'sqrthann' ]
+							[ 'sqrthamming' ]
+						]
+					]
+					[ @ampunit
+						[ description: "amplitude unit." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: linear ]
+							[ 1: decibels ]
+						]
+					]
+					[ @antimeunit
+						[ description: "analysis time unit." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+					[ @angleunit
+						[ description: "angle unit." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: 'radians' ]
+							[ 1: 'degrees' ]
+							[ 2: 'turns' ]
+						]
+					]
+					[ @frequnit
+						[ description: "unit for frequency components in @func." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: Hertz ]
+							[ 1: BPM ]
+							[ 2: midicents ]
+							[ 3: MIDI ]
+						]
+					]
+					[ @timeunit
+						[ description: "time unit." ]
+						[ type: int ]
+						[ default: 0 ]
+						[ options:
+							[ 0: milliseconds ]
+							[ 1: samples ]
+							[ 2: duration ratio ]
+							[ 3: milliseconds difference ]
+							[ 4: samples difference ]
+						]
+					]
+					[ @downmix
+						[ description: "downmix buffer." ]
+						[ type: int ]
+						[ default: 1 ]
+						[ options:
+							[ 0: off ]
+							[ 1: on ]
+						]
+					]
+				]
+			]
+			[ "resulting buffer keys:"
+				[ 'topartialtracks' ]
+			]
+			[ output:
+				[ description: "partial track analysis" ]
+				[ type: llll ]
+			]
+		]
+	]
