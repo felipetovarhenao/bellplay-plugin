@@ -1,0 +1,2491 @@
+[
+    {
+        "name": "readfolder",
+        "description": "Returns a list of file paths in specified folder directory.",
+        "args": [
+            {
+                "name": "@path"
+            },
+            {
+                "name": "@filetype (default: 'audio')"
+            }
+        ]
+    },
+    {
+        "name": "inspect",
+        "description": "Opens buffer inspector window, displaying relevant buffer information \u2014 useful for debugging.",
+        "args": [
+            {
+                "name": "@buffer"
+            },
+            {
+                "name": "@label"
+            }
+        ]
+    },
+    {
+        "name": "getmediafiles",
+        "description": "Returns a list of included media files in bellplay~.",
+        "args": [
+            {
+                "name": "@type"
+            }
+        ]
+    },
+    {
+        "name": "tosymbol",
+        "description": "Casts input value as a symbol.",
+        "args": [
+            {
+                "name": "@x"
+            }
+        ]
+    },
+    {
+        "name": "isnan",
+        "description": "Checks if the input argument is strictly a nan \u2014 i.e., 'not a number' \u2014 value.",
+        "args": [
+            {
+                "name": "@x"
+            }
+        ]
+    },
+    {
+        "name": "addmarker",
+        "description": "Inserts a marker into the transcription score, given an onset time and, optionally, a list of names associated with that marker, as a list.",
+        "args": [
+            {
+                "name": "@onset"
+            },
+            {
+                "name": "@names"
+            }
+        ]
+    },
+    {
+        "name": "pcdiff",
+        "description": "Signed pitch class difference.",
+        "args": [
+            {
+                "name": "@a"
+            },
+            {
+                "name": "@b"
+            }
+        ]
+    },
+    {
+        "name": "buildcorpus",
+        "description": "Creates a buffer corpus from a list of audio file paths, and writes it into disk as a .llll file. See #analyze and #onsets.",
+        "args": [
+            {
+                "name": "@files"
+            },
+            {
+                "name": "@descriptors"
+            },
+            {
+                "name": "@outpath"
+            },
+            {
+                "name": "@segmode (default: 1)"
+            },
+            {
+                "name": "@overlap (default: 1)"
+            },
+            {
+                "name": "@segsize (default: 100)"
+            },
+            {
+                "name": "@alpha (default: 0.1)"
+            },
+            {
+                "name": "@delay (default: 5)"
+            },
+            {
+                "name": "@framerate (default: 86.1328)"
+            },
+            {
+                "name": "@silencethreshold (default: 0.02)"
+            }
+        ]
+    },
+    {
+        "name": "setcorpus",
+        "description": "Loads an audio corpus, given an absolute path to a .llll file. See #query function.",
+        "args": [
+            {
+                "name": "@filepath"
+            }
+        ]
+    },
+    {
+        "name": "getcorpuskeys",
+        "description": "Returns a list with the current corpus' keys. See #setcorpus, #buildcorpus, and #query.",
+        "args": [
+            {
+                "name": "@typed (default: 1)"
+            }
+        ]
+    },
+    {
+        "name": "samplelist",
+        "description": "Samples an interpolated value from a numeric list given a normalized index.",
+        "args": [
+            {
+                "name": "@x"
+            },
+            {
+                "name": "@i"
+            }
+        ]
+    },
+    {
+        "name": "median",
+        "description": "Returns the median element of a numeric list.",
+        "args": [
+            {
+                "name": "@x"
+            }
+        ]
+    },
+    {
+        "name": "mean",
+        "description": "Returns the mean value of a numeric list.",
+        "args": [
+            {
+                "name": "@x"
+            },
+            {
+                "name": "@weights"
+            }
+        ]
+    },
+    {
+        "name": "query",
+        "description": "Executes a #sqlite3 query on the current audio corpus, and returns the results. Every query should use 'buffers' as the table name. For instance: 'SELECT * FROM buffers'. See #setcorpus.",
+        "args": [
+            {
+                "name": "@query (default: 'SELECT * FROM buffers')"
+            }
+        ]
+    },
+    {
+        "name": "getkey",
+        "description": "Returns value associated with a buffer's key.",
+        "args": [
+            {
+                "name": "@buffer"
+            },
+            {
+                "name": "@key"
+            }
+        ]
+    },
+    {
+        "name": "setkey",
+        "description": "Modifies the key of a buffer.",
+        "args": [
+            {
+                "name": "@buffer"
+            },
+            {
+                "name": "@key"
+            },
+            {
+                "name": "@val"
+            }
+        ]
+    },
+    {
+        "name": "mapkey",
+        "description": "Modifies the key of a buffer via a lambda function.",
+        "args": [
+            {
+                "name": "@buffer"
+            },
+            {
+                "name": "@key"
+            },
+            {
+                "name": "@func"
+            }
+        ]
+    },
+    {
+        "name": "bpf",
+        "description": "`Formats an numeric list into a breakpoint function, in the form of ['<x>', '<y>', '<slope>']  tuples. By default, <x> is normalized to the 0-1 range. To prevent this, set @xfunc to null.",
+        "args": [
+            {
+                "name": "@pts"
+            },
+            {
+                "name": "@xfunc (default: <normalization_function>)"
+            },
+            {
+                "name": "@yfunc"
+            },
+            {
+                "name": "@sfunc"
+            }
+        ]
+    },
+    {
+        "name": "x2dx",
+        "description": "Takes a list of numbers and returns the differences \u2014 i.e., deltas \u2014 between adjacent elements. Inverse of #dx2x.",
+        "args": [
+            {
+                "name": "@x"
+            }
+        ]
+    },
+    {
+        "name": "dx2x",
+        "description": "Takes a list of differences \u2014 i.e., deltas \u2014 and an optional starting value, and returns the cumulative sum between adjacent elements, as a list. Inverse of #x2dx.",
+        "args": [
+            {
+                "name": "@dx"
+            },
+            {
+                "name": "@st (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "r2dr",
+        "description": "Takes a list of ratios or factors and returns the quotients between adjacent elements. Inverse of #dr2r.",
+        "args": [
+            {
+                "name": "@r"
+            }
+        ]
+    },
+    {
+        "name": "dr2r",
+        "description": "Takes a list of ratios and an optional starting value, and returns the cumulative multiplication between adjacent elements, as a list. Inverse of #r2dr.",
+        "args": [
+            {
+                "name": "@dr"
+            },
+            {
+                "name": "@st (default: 1)"
+            }
+        ]
+    },
+    {
+        "name": "revbpf",
+        "description": "Reverses a breakpoint function. See #bpf.",
+        "args": [
+            {
+                "name": "@bpf"
+            }
+        ]
+    },
+    {
+        "name": "scale",
+        "description": "Scales an input value or list from a given range to another.",
+        "args": [
+            {
+                "name": "@x"
+            },
+            {
+                "name": "@inmin (default: 0)"
+            },
+            {
+                "name": "@inmax (default: 1)"
+            },
+            {
+                "name": "@outmin (default: 0)"
+            },
+            {
+                "name": "@outmax (default: 1)"
+            }
+        ]
+    },
+    {
+        "name": "rand",
+        "description": "Random floating point number generator.",
+        "args": [
+            {
+                "name": "@a"
+            },
+            {
+                "name": "@b"
+            },
+            {
+                "name": "@res (default: 1000)"
+            }
+        ]
+    },
+    {
+        "name": "nearest",
+        "description": "Given a target number, finds the nearest value in a numeric list via binary search.",
+        "args": [
+            {
+                "name": "@list"
+            },
+            {
+                "name": "@target"
+            }
+        ]
+    },
+    {
+        "name": "choose",
+        "description": "Choose randomly one or more elements from a list, with optional probability weights.",
+        "args": [
+            {
+                "name": "@choices"
+            },
+            {
+                "name": "@n (default: 1)"
+            },
+            {
+                "name": "@weights"
+            }
+        ]
+    },
+    {
+        "name": "c2r",
+        "description": "Cents to ratio conversion.",
+        "args": [
+            {
+                "name": "@cents"
+            }
+        ]
+    },
+    {
+        "name": "octreduce",
+        "description": "Reduces ratios to fit within the 1-2 range.",
+        "args": [
+            {
+                "name": "@ratios"
+            }
+        ]
+    },
+    {
+        "name": "r2pc",
+        "description": "Ratio to pitch class conversion, assuming octave equivalence.",
+        "args": [
+            {
+                "name": "@ratios"
+            },
+            {
+                "name": "@pc (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "mc2pc",
+        "description": "midicent to pitch class conversion.",
+        "args": [
+            {
+                "name": "@mc"
+            }
+        ]
+    },
+    {
+        "name": "r2mc",
+        "description": "Ratio to midicent conversion.",
+        "args": [
+            {
+                "name": "@ratios"
+            },
+            {
+                "name": "@mc (default: 6000)"
+            }
+        ]
+    },
+    {
+        "name": "r2c",
+        "description": "Ratio to cents conversion.",
+        "args": [
+            {
+                "name": "@ratios"
+            }
+        ]
+    },
+    {
+        "name": "sortbykey",
+        "description": "Sorts llll items by a given key.",
+        "args": [
+            {
+                "name": "@items"
+            },
+            {
+                "name": "@key"
+            }
+        ]
+    },
+    {
+        "name": "pitchdiff",
+        "description": "Given a list of target midicents and/or pitch classes, returns the signed difference between a pitch in midicents and the nearest midicent/pitch class target.",
+        "args": [
+            {
+                "name": "@pitch"
+            },
+            {
+                "name": "@targets"
+            }
+        ]
+    },
+    {
+        "name": "transcribe",
+        "description": "Adds input buffer to the rendering sequence. See #setcorpus, #query, and #render functions.",
+        "args": [
+            {
+                "name": "@buffer"
+            },
+            {
+                "name": "@onset (default: 0)"
+            },
+            {
+                "name": "@pan"
+            },
+            {
+                "name": "@gain"
+            },
+            {
+                "name": "@detune"
+            },
+            {
+                "name": "@voice (default: 1)"
+            }
+        ]
+    },
+    {
+        "name": "scoreconfig",
+        "description": "Configures the score appearance, such as the clefs, voice names, tone division, etc. See #transcribe.",
+        "args": [
+            {
+                "name": "@voicenames (default: 'output')"
+            },
+            {
+                "name": "@clefs (default: 'FFGG')"
+            },
+            {
+                "name": "@tonedivision (default: 8)"
+            },
+            {
+                "name": "@showdurations (default: 0)"
+            },
+            {
+                "name": "@midichannels (default: 1)"
+            }
+        ]
+    },
+    {
+        "name": "read",
+        "description": "Read .txt or native .llll data. The ignore attribute allows preventing some categories of symbols, such as parens, pitches and more, to be read according to the usual bell syntax.",
+        "args": [
+            {
+                "name": "@path"
+            },
+            {
+                "name": "@ignore"
+            }
+        ]
+    },
+    {
+        "name": "write",
+        "description": "Writes data into disk in either .txt or native .llll format.",
+        "args": [
+            {
+                "name": "@data"
+            },
+            {
+                "name": "@path"
+            },
+            {
+                "name": "@escape (default: 3)"
+            },
+            {
+                "name": "@wrap (default: 0)"
+            },
+            {
+                "name": "@indent (default: 'tab')"
+            },
+            {
+                "name": "@maxdecimals (default: 10)"
+            },
+            {
+                "name": "@maxdepth (default: -1)"
+            },
+            {
+                "name": "@negativeoctaves (default: 0)"
+            },
+            {
+                "name": "@parens (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "export",
+        "description": "Exports the rendered output as either a .wav, .mid/midi. or .llll file, given a output path. For .wav files, mono stem files can be separately exported. See #render function.",
+        "args": [
+            {
+                "name": "@path"
+            },
+            {
+                "name": "@stems (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "importmidi",
+        "description": "Imports a midi file, as a list of events, each with the following keys: 'pitch' , 'velocity', 'onset', 'voice', 'channel', and 'duration'",
+        "args": [
+            {
+                "name": "@path"
+            }
+        ]
+    },
+    {
+        "name": "hanning",
+        "description": "Generates a hanning window as a numeric list.",
+        "args": [
+            {
+                "name": "@length (default: 16)"
+            }
+        ]
+    },
+    {
+        "name": "interpolate",
+        "description": "Curve interpolation between two points.",
+        "args": [
+            {
+                "name": "@x"
+            },
+            {
+                "name": "@a"
+            },
+            {
+                "name": "@b"
+            },
+            {
+                "name": "@slope (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "samplebpf",
+        "description": "Samples an interpolated value from a breakpoint function, given a list of normalized indices. See #bpf function.",
+        "args": [
+            {
+                "name": "@bpf"
+            },
+            {
+                "name": "@pts"
+            }
+        ]
+    },
+    {
+        "name": "expand",
+        "description": "Modifies offset and duration of a buffer, such that it uses the full length of its reference buffer.",
+        "args": [
+            {
+                "name": "@buffer"
+            }
+        ]
+    },
+    {
+        "name": "buildtree",
+        "description": "Builds a k-dimensional tree on a set of buffers, given one or more buffer features. This tree can be queried via the #searchtree function. Note that there can only be one tree at a time.",
+        "args": [
+            {
+                "name": "@buffers"
+            },
+            {
+                "name": "@keys"
+            }
+        ]
+    },
+    {
+        "name": "searchtree",
+        "description": "k-nearest neighbor search on the current k-dimensional tree. The search input can be either a single buffer or, more directly, the values associated with the features the tree was based on. See #buildtree.",
+        "args": [
+            {
+                "name": "@target"
+            }
+        ]
+    },
+    {
+        "name": "render",
+        "description": "`Triggers audio rendering of all transcribed buffers via #transcribe, and returns the rendered buffer. Note that it's possible to apply post-rendering processing by passing audio processing commands (e.g., #reverse, #freeverb, #clip, etc.) to the @process arguments, but these audio modifications won't be accurately reflected in the score transcription. See #process function.",
+        "args": [
+            {
+                "name": "@numchannels (default: 2)"
+            },
+            {
+                "name": "@panmode (default: 0)"
+            },
+            {
+                "name": "@sr (default: 48000)"
+            },
+            {
+                "name": "@normalize (default: 0)"
+            },
+            {
+                "name": "@play (default: 0)"
+            },
+            {
+                "name": "@spread (default: 0)"
+            },
+            {
+                "name": "@fade (default: 5)"
+            },
+            {
+                "name": "@reset (default: 0)"
+            },
+            {
+                "name": "@process"
+            }
+        ]
+    },
+    {
+        "name": "process",
+        "description": "`Applies a sequence of DSP operations to the input buffer, prior to rendering, via audio processing commands. These commands are generated through functions (e.g., see #reverse, #paulstretch, #freeverb, #rubberband), which contain the parameters for that specific DSP operation. See @process argument in #render.",
+        "args": [
+            {
+                "name": "@buffer"
+            },
+            {
+                "name": "@commands"
+            },
+            {
+                "name": "@prefade (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "fade",
+        "description": "Audio process command for applying fadein/fadeout to a buffer. See #process.",
+        "args": [
+            {
+                "name": "@fadein (default: 5)"
+            },
+            {
+                "name": "@fadeout (default: 5)"
+            },
+            {
+                "name": "@fadeintype (default: 0)"
+            },
+            {
+                "name": "@fadeouttype (default: 0)"
+            },
+            {
+                "name": "@fadeincurve (default: -0.25)"
+            },
+            {
+                "name": "@fadeoutcurve (default: 0.25)"
+            },
+            {
+                "name": "@timeunit (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "crop",
+        "description": "Audio process command for cropping a buffer. See #process.",
+        "args": [
+            {
+                "name": "@start (default: 0)"
+            },
+            {
+                "name": "@end (default: 1000)"
+            },
+            {
+                "name": "@timeunit (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "reverse",
+        "description": "Audio process command for reversing a buffer. See #process.",
+        "args": []
+    },
+    {
+        "name": "dcfilter",
+        "description": "Audio process command for removing DC offset from a buffer. See #process.",
+        "args": []
+    },
+    {
+        "name": "getchannels",
+        "description": "Extracts one or more buffer channels as individual buffers.",
+        "args": [
+            {
+                "name": "@buffer"
+            },
+            {
+                "name": "@channels"
+            },
+            {
+                "name": "@all (default: 1)"
+            }
+        ]
+    },
+    {
+        "name": "freeverb",
+        "description": "Audio process command for applying reverb to a buffer. See #process function.",
+        "args": [
+            {
+                "name": "@roomsize (default: 0.5)"
+            },
+            {
+                "name": "@damp (default: 0.5)"
+            },
+            {
+                "name": "@width (default: 0.5)"
+            },
+            {
+                "name": "@tail (default: -1)"
+            },
+            {
+                "name": "@dry (default: 1)"
+            },
+            {
+                "name": "@wet (default: 0.16)"
+            }
+        ]
+    },
+    {
+        "name": "paulstretch",
+        "description": "Audio process command for applying time-stretching to a buffer. See #process.",
+        "args": [
+            {
+                "name": "@stretching (default: 1)"
+            },
+            {
+                "name": "@timeunit (default: 2)"
+            },
+            {
+                "name": "@envtimeunit (default: 2)"
+            },
+            {
+                "name": "@spectral (default: 1)"
+            },
+            {
+                "name": "@framesize (default: 8192)"
+            }
+        ]
+    },
+    {
+        "name": "paulfreeze",
+        "description": "Audio process command for freezing a buffer. See #process.",
+        "args": [
+            {
+                "name": "@duration (default: 1000)"
+            },
+            {
+                "name": "@position (default: 0)"
+            },
+            {
+                "name": "@timeunit (default: 0)"
+            },
+            {
+                "name": "@spectral (default: 1)"
+            },
+            {
+                "name": "@framesize (default: 8192)"
+            }
+        ]
+    },
+    {
+        "name": "overdrive",
+        "description": "Audio process command for applying soft-clip distortion to a buffer. See #process.",
+        "args": [
+            {
+                "name": "@factor"
+            }
+        ]
+    },
+    {
+        "name": "window",
+        "description": "Audio process command for applying a windowing function to a buffer. See #process.",
+        "args": [
+            {
+                "name": "@wintype (default: 'hann')"
+            },
+            {
+                "name": "@winnormalized (default: 0)"
+            },
+            {
+                "name": "@zeropadding (default: 0)"
+            },
+            {
+                "name": "@zerophase (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "biquad",
+        "description": "Audio process command for applying biquad filtering to a buffer. See #process.",
+        "args": [
+            {
+                "name": "@type"
+            },
+            {
+                "name": "@frequency (default: 2000)"
+            },
+            {
+                "name": "@gain (default: 1)"
+            },
+            {
+                "name": "@q (default: 80)"
+            }
+        ]
+    },
+    {
+        "name": "clip",
+        "description": "Audio process command for applying hard-clip distortion to a buffer. See #process.",
+        "args": [
+            {
+                "name": "@threshold"
+            }
+        ]
+    },
+    {
+        "name": "rubberband",
+        "description": "Audio process command for applying rubberband pitch-shifting/time-stretching to a buffer. See #process.",
+        "args": [
+            {
+                "name": "@stretching (default: 1)"
+            },
+            {
+                "name": "@pitchshift (default: 0)"
+            },
+            {
+                "name": "@pitchunit (default: 0)"
+            },
+            {
+                "name": "@timeunit (default: 2)"
+            },
+            {
+                "name": "@envtimeunit (default: 2)"
+            },
+            {
+                "name": "@blocksize (default: 1024)"
+            },
+            {
+                "name": "@fftwin (default: 1)"
+            },
+            {
+                "name": "@phase (default: 0)"
+            },
+            {
+                "name": "@pitchmode (default: 2)"
+            },
+            {
+                "name": "@formants (default: 0)"
+            },
+            {
+                "name": "@smoothing (default: 0)"
+            },
+            {
+                "name": "@stretchmode (default: 0)"
+            },
+            {
+                "name": "@detector (default: 0)"
+            },
+            {
+                "name": "@transients (default: 2)"
+            }
+        ]
+    },
+    {
+        "name": "soundtouch",
+        "description": "Audio process command for applying soundtouch pitch-shifting/time-stretching to a buffer. See #process.",
+        "args": [
+            {
+                "name": "@stretching (default: 1)"
+            },
+            {
+                "name": "@pitchshift (default: 0)"
+            },
+            {
+                "name": "@pitchunit (default: 0)"
+            },
+            {
+                "name": "@timeunit (default: 2)"
+            },
+            {
+                "name": "@antialias (default: 0)"
+            },
+            {
+                "name": "@quick (default: 0)"
+            },
+            {
+                "name": "@speech (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "groove",
+        "description": "Audio processing command for applying variable-rate sample playback to a buffer. See #process.",
+        "args": [
+            {
+                "name": "@rate (default: 1)"
+            },
+            {
+                "name": "@duration (default: 1000)"
+            }
+        ]
+    },
+    {
+        "name": "freqshift",
+        "description": "Audio process command for applying frequency shifting to a buffer. See #process.",
+        "args": [
+            {
+                "name": "@shift"
+            },
+            {
+                "name": "@negative (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "degrade",
+        "description": "Audio process command for reducing sampling rate and bit-depth of a buffer. See #process.",
+        "args": [
+            {
+                "name": "@ratio (default: 0.5)"
+            },
+            {
+                "name": "@bits (default: 4)"
+            }
+        ]
+    },
+    {
+        "name": "rounding",
+        "description": "Audio process command for applying signal rounding to a buffer. See #process.",
+        "args": [
+            {
+                "name": "@value (default: 1)"
+            },
+            {
+                "name": "@nearest (default: 1)"
+            }
+        ]
+    },
+    {
+        "name": "teeth",
+        "description": "Audio process command for applying comb filtering to a buffer, with feedforward and feedback delay control. See #process.",
+        "args": [
+            {
+                "name": "@feedforward (default: 5)"
+            },
+            {
+                "name": "@feedback (default: 10)"
+            },
+            {
+                "name": "@gain (default: 0.5)"
+            },
+            {
+                "name": "@feedforwardgain (default: 0.5)"
+            },
+            {
+                "name": "@feedbackgain (default: -0.5)"
+            }
+        ]
+    },
+    {
+        "name": "pong",
+        "description": "Audio process command for applying range limiting to a buffer. See #process.",
+        "args": [
+            {
+                "name": "@low (default: -1)"
+            },
+            {
+                "name": "@high (default: 1)"
+            },
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "retune",
+        "description": "Audio process command for applying autotune-like pitch retuning to a buffer. See #process.",
+        "args": [
+            {
+                "name": "@pitchgrid (default: 0)"
+            },
+            {
+                "name": "@threshold (default: 0)"
+            },
+            {
+                "name": "@ambiencethreshold (default: 0.3)"
+            },
+            {
+                "name": "@amount (default: 100)"
+            },
+            {
+                "name": "@bypass (default: 100)"
+            },
+            {
+                "name": "@quality (default: 'basic')"
+            }
+        ]
+    },
+    {
+        "name": "waveshape",
+        "description": "Audio process command for waveshaping a buffer. See #process.",
+        "args": [
+            {
+                "name": "@phase (default: -1 1)"
+            },
+            {
+                "name": "@duration (default: 1000)"
+            }
+        ]
+    },
+    {
+        "name": "scrub",
+        "description": "Audio process command for scrubbing through a buffer. See #process.",
+        "args": [
+            {
+                "name": "@phase (default: 0 1)"
+            },
+            {
+                "name": "@duration (default: 1000)"
+            }
+        ]
+    },
+    {
+        "name": "repeat",
+        "description": "Audio process command for repeating a buffer. See #process.",
+        "args": [
+            {
+                "name": "@duration (default: 2)"
+            },
+            {
+                "name": "@timeunit (default: 2)"
+            }
+        ]
+    },
+    {
+        "name": "scaling",
+        "description": "Audio process command for applying amplitude scaling to a buffer. See #process.",
+        "args": [
+            {
+                "name": "@inmin (default: 0)"
+            },
+            {
+                "name": "@inmax (default: 1)"
+            },
+            {
+                "name": "@outmin (default: 0)"
+            },
+            {
+                "name": "@outmax (default: 1)"
+            }
+        ]
+    },
+    {
+        "name": "mix",
+        "description": "Audio process command for mixing multiple buffers. See #process.",
+        "args": [
+            {
+                "name": "@buffers"
+            },
+            {
+                "name": "@gains"
+            },
+            {
+                "name": "@offsets"
+            },
+            {
+                "name": "@resamplingfiltersize (default: 11)"
+            },
+            {
+                "name": "@resamplingmode (default: 'sinc')"
+            },
+            {
+                "name": "@resamplingpolicy (default: 3)"
+            },
+            {
+                "name": "@ampunit (default: 0)"
+            },
+            {
+                "name": "@envampunit (default: 0)"
+            },
+            {
+                "name": "@timeunit (default: 0)"
+            },
+            {
+                "name": "@envtimeunit (default: 2)"
+            },
+            {
+                "name": "@interp (default: 0)"
+            },
+            {
+                "name": "@normalize (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "absolute",
+        "description": "Audio process command for computing the absolute value of a buffer signal. See #process.",
+        "args": []
+    },
+    {
+        "name": "squareroot",
+        "description": "Audio process command for computing the square root of a buffer signal. See #process.",
+        "args": []
+    },
+    {
+        "name": "power",
+        "description": "Audio process command for performing exponentiation on a buffer. See #process.",
+        "args": [
+            {
+                "name": "@operand (default: 2)"
+            },
+            {
+                "name": "@resamplingfiltersize (default: 11)"
+            },
+            {
+                "name": "@resamplingmode (default: 'sinc')"
+            },
+            {
+                "name": "@resamplingpolicy (default: 3)"
+            },
+            {
+                "name": "@envtimeunit (default: 2)"
+            }
+        ]
+    },
+    {
+        "name": "plus",
+        "description": "Audio process command for performing addition on a buffer. See #process.",
+        "args": [
+            {
+                "name": "@operand"
+            },
+            {
+                "name": "@resamplingfiltersize (default: 11)"
+            },
+            {
+                "name": "@resamplingmode (default: 'sinc')"
+            },
+            {
+                "name": "@resamplingpolicy (default: 3)"
+            },
+            {
+                "name": "@envtimeunit (default: 2)"
+            }
+        ]
+    },
+    {
+        "name": "minus",
+        "description": "Audio process command for performing subtraction on a buffer. See #process.",
+        "args": [
+            {
+                "name": "@operand"
+            },
+            {
+                "name": "@resamplingfiltersize (default: 11)"
+            },
+            {
+                "name": "@resamplingmode (default: 'sinc')"
+            },
+            {
+                "name": "@resamplingpolicy (default: 3)"
+            },
+            {
+                "name": "@envtimeunit (default: 2)"
+            }
+        ]
+    },
+    {
+        "name": "multiply",
+        "description": "Audio process command for performing multiplication on a buffer. See #process.",
+        "args": [
+            {
+                "name": "@operand"
+            },
+            {
+                "name": "@resamplingfiltersize (default: 11)"
+            },
+            {
+                "name": "@resamplingmode (default: 'sinc')"
+            },
+            {
+                "name": "@resamplingpolicy (default: 3)"
+            },
+            {
+                "name": "@envtimeunit (default: 2)"
+            }
+        ]
+    },
+    {
+        "name": "divide",
+        "description": "Audio process command for performing division on a buffer. See #process.",
+        "args": [
+            {
+                "name": "@operand"
+            },
+            {
+                "name": "@resamplingfiltersize (default: 11)"
+            },
+            {
+                "name": "@resamplingmode (default: 'sinc')"
+            },
+            {
+                "name": "@resamplingpolicy (default: 3)"
+            },
+            {
+                "name": "@envtimeunit (default: 2)"
+            }
+        ]
+    },
+    {
+        "name": "wavesetrepeat",
+        "description": "Audio process command for applying waveset repetition to a buffer. See #process.",
+        "args": [
+            {
+                "name": "@times (default: 2)"
+            },
+            {
+                "name": "@span (default: 1)"
+            },
+            {
+                "name": "@normalize (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "wavesetshuffle",
+        "description": "Audio process command for applying waveset shuffling to a buffer. See #process.",
+        "args": [
+            {
+                "name": "@maxdist (default: 1)"
+            },
+            {
+                "name": "@span (default: 1)"
+            }
+        ]
+    },
+    {
+        "name": "rampsmooth",
+        "description": "Audio process command for applying rampsmoothing to a buffer. See #process.",
+        "args": [
+            {
+                "name": "@up (default: 1024)"
+            },
+            {
+                "name": "@down (default: 1024)"
+            }
+        ]
+    },
+    {
+        "name": "onepole",
+        "description": "Audio process command for applying single-pole lowpass or highpass filtering to a buffer. See #process.",
+        "args": [
+            {
+                "name": "@cutoff (default: 1)"
+            },
+            {
+                "name": "@highpass (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "mixdown",
+        "description": "`Audio process command for mixing down (or up) the number of channels of a buffer. See #process.",
+        "args": [
+            {
+                "name": "@numchannels (default: 1)"
+            },
+            {
+                "name": "@channelmode (default: 3)"
+            },
+            {
+                "name": "@autogain (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "join",
+        "description": "Audio process command for concatenating one or more buffers to the processed buffer. See #process.",
+        "args": [
+            {
+                "name": "@buffers"
+            },
+            {
+                "name": "@xfade (default: 0)"
+            },
+            {
+                "name": "@xfadecurve (default: 0)"
+            },
+            {
+                "name": "@xfadetype (default: 1)"
+            },
+            {
+                "name": "@fadeboundaries (default: 0)"
+            },
+            {
+                "name": "@timeunit (default: 0)"
+            },
+            {
+                "name": "@resamplingfiltersize (default: 11)"
+            },
+            {
+                "name": "@resamplingmode (default: 'sinc')"
+            },
+            {
+                "name": "@resamplingpolicy (default: 3)"
+            }
+        ]
+    },
+    {
+        "name": "trim",
+        "description": "Audio process command for applying silence-based trimming to a buffer. When the entire buffer is considered silent, the resulting buffer's duration will be a single audio sample. See #process.",
+        "args": [
+            {
+                "name": "@threshold (default: 0.1)"
+            },
+            {
+                "name": "@ampunit (default: 0)"
+            },
+            {
+                "name": "@start (default: 1)"
+            },
+            {
+                "name": "@end (default: 1)"
+            }
+        ]
+    },
+    {
+        "name": "timesquash",
+        "description": "Audio process command for applying timesquash time compression to a buffer. This removes time from a sample by shifting portions of the spectrogram while preserving the relevant content. See #process.",
+        "args": [
+            {
+                "name": "@duration (default: 1)"
+            },
+            {
+                "name": "@timeunit (default: 2)"
+            },
+            {
+                "name": "@timeblock (default: 4096)"
+            },
+            {
+                "name": "@mode (default: 1)"
+            },
+            {
+                "name": "@xfade (default: 4096)"
+            },
+            {
+                "name": "@xfadecurve (default: 0)"
+            },
+            {
+                "name": "@xfadetype (default: 1)"
+            },
+            {
+                "name": "@glbleed (default: 4)"
+            },
+            {
+                "name": "@glnumiter (default: 10)"
+            },
+            {
+                "name": "@glrandomize (default: 0)"
+            },
+            {
+                "name": "@glrect (default: 1)"
+            },
+            {
+                "name": "@batchsize (default: 1)"
+            },
+            {
+                "name": "@batchinterrupt (default: 0)"
+            },
+            {
+                "name": "@energy (default: 2)"
+            },
+            {
+                "name": "@forwardenergy (default: 1)"
+            },
+            {
+                "name": "@forwardenergyembed (default: 1)"
+            },
+            {
+                "name": "@forwardenergytype (default: 1)"
+            },
+            {
+                "name": "@framesize (default: 2048)"
+            },
+            {
+                "name": "@hopsize (default: 1024)"
+            },
+            {
+                "name": "@phasehandling (default: 2)"
+            },
+            {
+                "name": "@regularization (default: 0.01)"
+            },
+            {
+                "name": "@wintype (default: 'sqrthann' 'sqrthann')"
+            }
+        ]
+    },
+    {
+        "name": "resample",
+        "description": "Audio process command for applying stretching/pitch shifting a buffer via resampling. See #process.",
+        "args": [
+            {
+                "name": "@duration (default: 1)"
+            },
+            {
+                "name": "@timeunit (default: 2)"
+            },
+            {
+                "name": "@changesr (default: 0)"
+            },
+            {
+                "name": "@antimeunit (default: 1)"
+            },
+            {
+                "name": "@resamplingmode (default: 'sinc')"
+            },
+            {
+                "name": "@resamplingfiltersize (default: 11)"
+            }
+        ]
+    },
+    {
+        "name": "panning",
+        "description": "Audio process command for applying 1-D panning to a buffer. See #process.",
+        "args": [
+            {
+                "name": "@position"
+            },
+            {
+                "name": "@numchannels (default: 2)"
+            },
+            {
+                "name": "@panmode (default: 0)"
+            },
+            {
+                "name": "@panlaw (default: 1)"
+            },
+            {
+                "name": "@rangetype (default: 1)"
+            },
+            {
+                "name": "@range (default: 0 1)"
+            },
+            {
+                "name": "@compensate (default: 1)"
+            },
+            {
+                "name": "@spread (default: 0)"
+            },
+            {
+                "name": "@envtimeunit (default: 2)"
+            }
+        ]
+    },
+    {
+        "name": "normalize",
+        "description": "Audio process command for normalizing the amplitude of a buffer. See #process.",
+        "args": [
+            {
+                "name": "@level (default: -6)"
+            },
+            {
+                "name": "@mix (default: 1)"
+            },
+            {
+                "name": "@rms (default: 0)"
+            },
+            {
+                "name": "@ampunit (default: 1)"
+            }
+        ]
+    },
+    {
+        "name": "gain",
+        "description": "Audio process command for modifying a buffer's gain. See #process.",
+        "args": [
+            {
+                "name": "@gain"
+            },
+            {
+                "name": "@resamplingfiltersize (default: 11)"
+            },
+            {
+                "name": "@resamplingmode (default: 'sinc')"
+            },
+            {
+                "name": "@ampunit (default: 0)"
+            },
+            {
+                "name": "@envampunit (default: 0)"
+            },
+            {
+                "name": "@envtimeunit (default: 2)"
+            }
+        ]
+    },
+    {
+        "name": "dynamics",
+        "description": "Audio process command for applying simple compression to a buffer. See #process.",
+        "args": [
+            {
+                "name": "@attack (default: 10)"
+            },
+            {
+                "name": "@release (default: 50)"
+            },
+            {
+                "name": "@knee (default: 0.7)"
+            },
+            {
+                "name": "@makeup (default: 0)"
+            },
+            {
+                "name": "@ratio (default: 1.5)"
+            },
+            {
+                "name": "@thresh (default: -20)"
+            },
+            {
+                "name": "@ampunit (default: 1)"
+            },
+            {
+                "name": "@timeunit (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "importaudio",
+        "description": "Imports an audio file as a buffer.",
+        "args": [
+            {
+                "name": "@path"
+            }
+        ]
+    },
+    {
+        "name": "noise",
+        "description": "Generates white noise as a buffer.",
+        "args": [
+            {
+                "name": "@duration (default: 50)"
+            }
+        ]
+    },
+    {
+        "name": "randosc",
+        "description": "Generates a random oscillator as a buffer.",
+        "args": [
+            {
+                "name": "@frequency (default: 440)"
+            },
+            {
+                "name": "@duration (default: 50)"
+            }
+        ]
+    },
+    {
+        "name": "cycle",
+        "description": "Generates a sinusoidal oscillator as a buffer.",
+        "args": [
+            {
+                "name": "@frequency (default: 440)"
+            },
+            {
+                "name": "@duration (default: 50)"
+            },
+            {
+                "name": "@phase (default: 0.5)"
+            }
+        ]
+    },
+    {
+        "name": "rect",
+        "description": "`Generates a bipolar, anti-aliased rectangular (pulse) oscillator as a buffer.",
+        "args": [
+            {
+                "name": "@frequency (default: 440)"
+            },
+            {
+                "name": "@duration (default: 50)"
+            },
+            {
+                "name": "@duty (default: 0.5)"
+            }
+        ]
+    },
+    {
+        "name": "saw",
+        "description": "Generates a bipolar, anti-aliased sawtooth oscillator as a buffer.",
+        "args": [
+            {
+                "name": "@frequency (default: 440)"
+            },
+            {
+                "name": "@duration (default: 50)"
+            }
+        ]
+    },
+    {
+        "name": "tri",
+        "description": "Generates a bipolar, anti-aliased triangular oscillator as a buffer.",
+        "args": [
+            {
+                "name": "@frequency (default: 440)"
+            },
+            {
+                "name": "@duration (default: 50)"
+            },
+            {
+                "name": "@duty (default: 0.5)"
+            }
+        ]
+    },
+    {
+        "name": "triangle",
+        "description": "Generates a triangular/ramp oscillator as a buffer.",
+        "args": [
+            {
+                "name": "@frequency (default: 440)"
+            },
+            {
+                "name": "@duration (default: 50)"
+            },
+            {
+                "name": "@phase (default: 0)"
+            },
+            {
+                "name": "@offset (default: 0.5)"
+            }
+        ]
+    },
+    {
+        "name": "phasor",
+        "description": "Generates a unipolar ramp oscillator as a buffer.",
+        "args": [
+            {
+                "name": "@frequency (default: 440)"
+            },
+            {
+                "name": "@duration (default: 50)"
+            },
+            {
+                "name": "@phase (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "envelope",
+        "description": "Generates an audio envelope as a buffer, given a single number or a breakpoint function.",
+        "args": [
+            {
+                "name": "@envelope (default: 0)"
+            },
+            {
+                "name": "@duration (default: 1000)"
+            }
+        ]
+    },
+    {
+        "name": "clicks",
+        "description": "Generates a buffer containing a set of clicks at specific onsets. Note that if the first onset value is 0, it might get silenced when the @fade argument in #render is non-zero.",
+        "args": [
+            {
+                "name": "@onsets (default: 0)"
+            },
+            {
+                "name": "@gains (default: 1)"
+            },
+            {
+                "name": "@impulse (default: 1)"
+            },
+            {
+                "name": "@timeunit (default: 0)"
+            },
+            {
+                "name": "@ampunit (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "frompartialtracks",
+        "description": "Converts a partial track analysis into a buffer.",
+        "args": [
+            {
+                "name": "@frequencies"
+            },
+            {
+                "name": "@magnitudes"
+            },
+            {
+                "name": "@phases"
+            },
+            {
+                "name": "@framesize (default: 2048)"
+            },
+            {
+                "name": "@hopsize (default: 512)"
+            },
+            {
+                "name": "@ampunit (default: 0)"
+            },
+            {
+                "name": "@antimeunit (default: 1)"
+            },
+            {
+                "name": "@angleunit (default: 0)"
+            },
+            {
+                "name": "@frequnit (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "analyze",
+        "description": "`Applies a sequence of audio analysis operations to the input buffer, via audio descriptors. These descriptors are generated through functions (e.g., see #flux, #dissonance, #spectrum), which contain the parameters for that specific audio analysis.",
+        "args": [
+            {
+                "name": "@buffer"
+            },
+            {
+                "name": "@descriptors"
+            },
+            {
+                "name": "@winstartfromzero (default: 0)"
+            },
+            {
+                "name": "@framesize (default: 2048)"
+            },
+            {
+                "name": "@hopsize (default: 1024)"
+            },
+            {
+                "name": "@numframes (default: 'auto')"
+            },
+            {
+                "name": "@overlap (default: 1)"
+            },
+            {
+                "name": "@wintype (default: 'hann')"
+            },
+            {
+                "name": "@winnormalized (default: 1)"
+            },
+            {
+                "name": "@envattack (default: 10)"
+            },
+            {
+                "name": "@envrelease (default: 100)"
+            },
+            {
+                "name": "@onsetdetectionmethod (default: 'complex')"
+            },
+            {
+                "name": "@peaksmaxnum (default: 100)"
+            },
+            {
+                "name": "@peaksorderby (default: 'complex')"
+            },
+            {
+                "name": "@peaksmagthresh (default: 0)"
+            },
+            {
+                "name": "@peaksmaxfreq (default: 5000)"
+            },
+            {
+                "name": "@peaksminfreq (default: 0)"
+            },
+            {
+                "name": "@summary (default: 3)"
+            },
+            {
+                "name": "@summaryweight (default: 1)"
+            },
+            {
+                "name": "@summarypositive (default: 0)"
+            },
+            {
+                "name": "@ampunit (default: 0)"
+            },
+            {
+                "name": "@antimeunit (default: 1)"
+            },
+            {
+                "name": "@envtimeunit (default: 0)"
+            },
+            {
+                "name": "@frequnit (default: 0)"
+            },
+            {
+                "name": "@pitchunit (default: 0)"
+            },
+            {
+                "name": "@timeunit (default: 0)"
+            },
+            {
+                "name": "@yinmaxfreq (default: 22050)"
+            },
+            {
+                "name": "@yinminfreq (default: 20)"
+            },
+            {
+                "name": "@yintolerance (default: 1)"
+            },
+            {
+                "name": "@frametime (default: 0)"
+            },
+            {
+                "name": "@bufinterp (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "effectiveduration",
+        "description": "Audio descriptor to compute the effective duration of an envelope signal. The effective duration is a measure of the time the signal is perceptually meaningful. This is approximated by the time the envelope is above or equal to a given threshold and is above the -90db noise floor. This measure allows to distinguish percussive sounds from sustained sounds but depends on the signal length. By default, this algorithm uses 40% of the envelope maximum as the threshold which is suited for short sounds. Note, that the 0% thresold corresponds to the duration of signal above -90db noise floor, while the 100% thresold corresponds to the number of times the envelope takes its maximum value. See #analyze.",
+        "args": [
+            {
+                "name": "@samplerate (default: 44100)"
+            },
+            {
+                "name": "@thresholdratio (default: 0.4)"
+            }
+        ]
+    },
+    {
+        "name": "envmaxtime",
+        "description": "Audio descriptor to extract the time at which the global maxima of the buffer's envelope occurs. See #analyze.",
+        "args": []
+    },
+    {
+        "name": "envmintime",
+        "description": "Audio descriptor to extract the time at which the global minima of the buffer's envelope occurs. See #analyze.",
+        "args": []
+    },
+    {
+        "name": "pitchyin",
+        "description": "Audio descriptor to estimate the fundamental frequency of a monophonic buffer. It is an implementation of the Yin algorithm for computations in the time domain. See #analyze.",
+        "args": [
+            {
+                "name": "@framesize (default: 2048)"
+            },
+            {
+                "name": "@interpolate (default: 1)"
+            },
+            {
+                "name": "@maxfrequency (default: 22050)"
+            },
+            {
+                "name": "@minfrequency (default: 20)"
+            },
+            {
+                "name": "@samplerate (default: 44100)"
+            },
+            {
+                "name": "@tolerance (default: 0.15)"
+            },
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "spectralkurtosis",
+        "description": "Audio descriptor to compute the spectral kurtosis of a buffer. See #analyze.",
+        "args": [
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "temporalkurtosis",
+        "description": "Audio descriptor to compute the temporal kurtosis of a buffer. See #analyze.",
+        "args": []
+    },
+    {
+        "name": "spectralskewness",
+        "description": "Audio descriptor to compute the spectral skewness of a buffer. See #analyze.",
+        "args": [
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "temporalskewness",
+        "description": "Audio descriptor to compute the temporal skewness of a buffer. See #analyze.",
+        "args": []
+    },
+    {
+        "name": "spectralspread",
+        "description": "Audio descriptor to compute the spectral spread of a buffer. See #analyze.",
+        "args": [
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "temporalspread",
+        "description": "Audio descriptor to compute the temporal spread of a buffer. See #analyze.",
+        "args": []
+    },
+    {
+        "name": "spectralvariance",
+        "description": "Audio descriptor to compute the spectral variance of a buffer. See #analyze.",
+        "args": [
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "temporalvariance",
+        "description": "Audio descriptor to compute the temporal variance of a buffer. See #analyze.",
+        "args": []
+    },
+    {
+        "name": "energy",
+        "description": "Audio descriptor to compute the energy of a buffer. See #analyze.",
+        "args": [
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "energyband",
+        "description": "Audio descriptor to compute energy in a given frequency band of a spectrum including both start and stop cutoff frequencies. See #analyze.",
+        "args": [
+            {
+                "name": "@startcutofffrequency (default: 0)"
+            },
+            {
+                "name": "@stopcutofffrequency (default: 100)"
+            },
+            {
+                "name": "@samplerate (default: 44100)"
+            },
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "dissonance",
+        "description": "Audio descriptor to compute the sensory dissonance of a buffer. See #analyze.",
+        "args": [
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "strongpeak",
+        "description": "Audio descriptor to compute the strong peak of a buffer, defined as the ratio between the spectrum's maximum peak's magnitude and the 'bandwidth' of the peak above a threshold \u2014 i.e., half its amplitude. This ratio reveals whether the spectrum presents a very 'pronounced' maximum peak \u2014 i.e., the thinner and the higher the maximum of the spectrum is, the higher the ratio value. Note that 'bandwidth' is defined as the width of the peak in the log10-frequency domain. Using the log10-frequency domain allows this algorithm to compare strong peaks at lower frequencies with those from higher frequencies. See #analyze.",
+        "args": [
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "inharmonicity",
+        "description": "Audio descriptor to calculate the inharmonicity of a buffer. See #analyze.",
+        "args": [
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "zerocrossingrate",
+        "description": "Audio descriptor to compute the zero-crossing rate of a buffer, defined as the number of sign changes between consecutive signal values divided by the total number of values. Noisy signals tend to have higher zero-crossing rate. In order to avoid small variations around zero caused by noise, a threshold around zero is given to consider a valid zerocrosing whenever the boundary is crossed. See #analyze.",
+        "args": [
+            {
+                "name": "@threshold (default: 0)"
+            },
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "strongdecay",
+        "description": "Audio descriptor to compute the strong decay of a buffer. The strong decay is built from the non-linear combination of the signal energy and the signal temporal centroid, the latter being the balance of the absolute value of the signal. A signal containing a temporal centroid near its start boundary and a strong energy is said to have a strong decay. See #analyze.",
+        "args": [
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "spectrum",
+        "description": "`Audio descriptor to compute the magnitude spectrum of a buffer. The resulting magnitude spectrum has a size which is half the size of the input array plus one. Bins contain raw (linear) magnitude values. See #analyze.",
+        "args": [
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "rhythm",
+        "description": "Audio descriptor for extract the beat positions and estimate their confidence as well as tempo in bpm for a buffer. See #analyze.",
+        "args": [
+            {
+                "name": "@maxtempo (default: 208)"
+            },
+            {
+                "name": "@mintempo (default: 40)"
+            },
+            {
+                "name": "@method (default: 'multifeature')"
+            }
+        ]
+    },
+    {
+        "name": "logattack",
+        "description": "`Audio descriptor to compute the log (base 10) of the attack time of buffer's envelope. The attack time is defined as the time duration from when the sound becomes perceptually audible to when it reaches its maximum intensity. By default, the start of the attack is estimated as the point where the signal envelope reaches 20% of its maximum value in order to account for possible noise presence. Also by default, the end of the attack is estimated as as the point where the signal envelope has reached 90% of its maximum value, in order to account for the possibility that the max value occurres after the log-attack, as in trumpet sounds. See #analyze.",
+        "args": []
+    },
+    {
+        "name": "chordsdetection",
+        "description": "Audio descriptor to perform chord estimation on a buffer. See #analyze.",
+        "args": [
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "pitchmelodia",
+        "description": "Audio descriptor to estimate the fundamental frequency corresponding to the melody of a monophonic music signal based on the MELODIA algorithm. While the algorithm is originally designed to extract the predominant melody from polyphonic music, this implementation is adapted for monophonic signals. The approach is based on the creation and characterization of pitch contours, time continuous sequences of pitch candidates grouped using auditory streaming cues. It is strongly advised to use the default parameter values which are optimized for this task, except for @minfrequency and @maxfrequency, which will be context-dependent. See #analyze.",
+        "args": [
+            {
+                "name": "@binresolution (default: 10)"
+            },
+            {
+                "name": "@filteriterations (default: 3)"
+            },
+            {
+                "name": "@framesize (default: 2048)"
+            },
+            {
+                "name": "@guessunvoiced (default: 0)"
+            },
+            {
+                "name": "@harmonicweight (default: 0.8)"
+            },
+            {
+                "name": "@hopsize (default: 1024)"
+            },
+            {
+                "name": "@magnitudecompression (default: 1)"
+            },
+            {
+                "name": "@magnitudethreshold (default: 40)"
+            },
+            {
+                "name": "@maxfrequency (default: 20000)"
+            },
+            {
+                "name": "@minduration (default: 100)"
+            },
+            {
+                "name": "@minfrequency (default: 40)"
+            },
+            {
+                "name": "@numberharmonics (default: 20)"
+            },
+            {
+                "name": "@peakdistributionthreshold (default: 0.9)"
+            },
+            {
+                "name": "@peakframethreshold (default: 0.9)"
+            },
+            {
+                "name": "@pitchcontinuity (default: 27.5625)"
+            },
+            {
+                "name": "@referencefrequency (default: 55)"
+            },
+            {
+                "name": "@samplerate (default: 44100)"
+            },
+            {
+                "name": "@timecontinuity (default: 100)"
+            },
+            {
+                "name": "@polyphonic (default: 0)"
+            },
+            {
+                "name": "@voicevibrato (default: 0)"
+            },
+            {
+                "name": "@voicingtolerance (default: 0.2)"
+            },
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "mfcc",
+        "description": "Audio descriptor to compute the mel-frequency cepstrum coefficients of a buffer's spectrum. As there is no standard implementation, the MFCC-FB40 is used by default. See #analyze.",
+        "args": [
+            {
+                "name": "@dcttype (default: 2)"
+            },
+            {
+                "name": "@highfrequencybound (default: 11000)"
+            },
+            {
+                "name": "@inputsize (default: 1025)"
+            },
+            {
+                "name": "@liftering (default: 0)"
+            },
+            {
+                "name": "@logtype (default: 'dbamp')"
+            },
+            {
+                "name": "@lowfrequencybound (default: 0)"
+            },
+            {
+                "name": "@normalize (default: 'unit_sum')"
+            },
+            {
+                "name": "@numberbands (default: 40)"
+            },
+            {
+                "name": "@numbercoefficients (default: 13)"
+            },
+            {
+                "name": "@samplerate (default: 44100)"
+            },
+            {
+                "name": "@silencethreshold (default: 1e-10)"
+            },
+            {
+                "name": "@type (default: 'power')"
+            },
+            {
+                "name": "@warpingformula (default: 'htkmel')"
+            },
+            {
+                "name": "@weighting (default: 'warping')"
+            },
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "flux",
+        "description": "Audio descriptor to compute the spectral flux of a buffer. See #analyze.",
+        "args": [
+            {
+                "name": "@halfrectify (default: 0)"
+            },
+            {
+                "name": "@norm (default: 'L2')"
+            },
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "larm",
+        "description": "Audio descriptor to estimate the long-term loudness of a buffer. See #analyze.",
+        "args": [
+            {
+                "name": "@attacktime (default: 10)"
+            },
+            {
+                "name": "@power (default: 1.5)"
+            },
+            {
+                "name": "@releasetime (default: 1500)"
+            },
+            {
+                "name": "@samplerate (default: 44100)"
+            },
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "spectralcentroid",
+        "description": "Audio descriptor to calculate the spectral centroid of a buffer, defined as the 'center of mass' of the spectrum, in Hertz. Perceptually, it has a robust connection with the impression of 'brightness' of a sound, and therefore is used to characterize musical timbre. It is calculated as the weighted mean of the frequencies present in the signal, with their magnitudes as the weights. See #analyze.",
+        "args": [
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "temporalcentroid",
+        "description": "Audio descriptor to calculate the temporal centroid of a buffer, defined as the point in time that is a temporal balancing point of the sound's energy. See #analyze.",
+        "args": []
+    },
+    {
+        "name": "spectralflatness",
+        "description": "Audio descriptor to calculate the spectral flatness of a buffer, defined as the ratio between the spectrum's geometric mean and arithmetic mean. See #analyze.",
+        "args": [
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "temporalflatness",
+        "description": "Audio descriptor to calculate the temporal flatness of a buffer, defined as the ratio between the buffer envelope's geometric mean and arithmetic mean. Flatness is undefined for empty input and negative values, therefore an exception is thrown in any both cases. See #analyze.",
+        "args": []
+    },
+    {
+        "name": "barkbands",
+        "description": "Audio descriptor to compute the Bark bands of a spectrum. For each bark band the power-spectrum \u2014 i.e., mag-squared \u2014 is summed. See #analyze.",
+        "args": [
+            {
+                "name": "@numberbands (default: 27)"
+            },
+            {
+                "name": "@samplerate (default: 44100)"
+            },
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "beatsloudness",
+        "description": "Audio descriptor to compute the spectrum energy of beats in an audio signal given their positions. The energy is computed both on the whole frequency range and for each of the specified frequency bands. See #analyze.",
+        "args": [
+            {
+                "name": "@beats"
+            },
+            {
+                "name": "@beatduration (default: 0.05)"
+            },
+            {
+                "name": "@beatwindowduration (default: 0.1)"
+            },
+            {
+                "name": "@frequencybands (default: 20 150 400 3200 7000 22000)"
+            },
+            {
+                "name": "@samplerate (default: 44100)"
+            },
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "bfcc",
+        "description": "Audio descriptor to compute the bark-frequency cepstrum coefficients of a spectrum. Bark bands and their subsequent usage in cepstral analysis have shown to be useful in percussive content. See #analyze.",
+        "args": [
+            {
+                "name": "@dcttype (default: 2)"
+            },
+            {
+                "name": "@highfrequencybound (default: 11000)"
+            },
+            {
+                "name": "@inputsize (default: 1025)"
+            },
+            {
+                "name": "@liftering (default: 0)"
+            },
+            {
+                "name": "@logtype (default: 'dbamp')"
+            },
+            {
+                "name": "@lowfrequencybound (default: 0)"
+            },
+            {
+                "name": "@normalize (default: 'unit_sum')"
+            },
+            {
+                "name": "@numberbands (default: 40)"
+            },
+            {
+                "name": "@numbercoefficients (default: 13)"
+            },
+            {
+                "name": "@samplerate (default: 44100)"
+            },
+            {
+                "name": "@type (default: 'power')"
+            },
+            {
+                "name": "@weighting (default: 'warping')"
+            },
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "rolloff",
+        "description": "Audio descriptor to compute the roll-off frequency of a spectrum. The roll-off frequency is defined as the frequency under which some percentage \u2014 i.e., cutoff \u2014 of the total energy of the spectrum is contained. The roll-off frequency can be used to distinguish between harmonic \u2014 i.e., below roll-off \u2014 and noisy sounds \u2014 i.e., above roll-off. See #analyze.",
+        "args": [
+            {
+                "name": "@cutoff (default: 0.85)"
+            },
+            {
+                "name": "@samplerate (default: 44100)"
+            },
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "maxmagfreq",
+        "description": "Audio descriptor to compute the frequency with the largest magnitude in a spectrum. See #analyze.",
+        "args": [
+            {
+                "name": "@samplerate (default: 44100)"
+            },
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "onsets",
+        "description": "Audio descriptor to compute the onset positions in a buffer. See #analyze.",
+        "args": [
+            {
+                "name": "@alpha (default: 0.1)"
+            },
+            {
+                "name": "@delay (default: 5)"
+            },
+            {
+                "name": "@framerate (default: 86.1328)"
+            },
+            {
+                "name": "@silencethreshold (default: 0.02)"
+            }
+        ]
+    },
+    {
+        "name": "onsetdetection",
+        "description": "Audio descriptor to compute buffer onsets, given various onset detection functions. See #analyze.",
+        "args": [
+            {
+                "name": "@method (default: 'hfc')"
+            },
+            {
+                "name": "@samplerate (default: 44100)"
+            },
+            {
+                "name": "@mode (default: 1)"
+            }
+        ]
+    },
+    {
+        "name": "tonalkey",
+        "description": "Audio descriptor to perform tonal key signature estimation on a buffer. See #analyze.",
+        "args": [
+            {
+                "name": "@numharmonics (default: 4)"
+            },
+            {
+                "name": "@pcpsize (default: 36)"
+            },
+            {
+                "name": "@profiletype (default: 'bgate')"
+            },
+            {
+                "name": "@slope (default: 0.6)"
+            },
+            {
+                "name": "@usemajmin (default: 0)"
+            },
+            {
+                "name": "@usepolyphony (default: 1)"
+            },
+            {
+                "name": "@usethreechords (default: 1)"
+            },
+            {
+                "name": "@mode (default: 0)"
+            }
+        ]
+    },
+    {
+        "name": "topartialtracks",
+        "description": "Converts a buffer into a partial track analysis.",
+        "args": [
+            {
+                "name": "@buffer"
+            },
+            {
+                "name": "@winstartfromzero (default: 0)"
+            },
+            {
+                "name": "@framesize (default: 2048)"
+            },
+            {
+                "name": "@hopsize (default: 512)"
+            },
+            {
+                "name": "@freqdevoffset (default: 20)"
+            },
+            {
+                "name": "@freqdevslope (default: 0.01)"
+            },
+            {
+                "name": "@magnitudethreshold (default: 0.0002)"
+            },
+            {
+                "name": "@maxfrequency (default: 22050)"
+            },
+            {
+                "name": "@minfrequency (default: 0)"
+            },
+            {
+                "name": "@maxpeaks (default: 100)"
+            },
+            {
+                "name": "@maxnsines (default: 100)"
+            },
+            {
+                "name": "@numframes (default: 'auto')"
+            },
+            {
+                "name": "@orderby (default: 'frequency')"
+            },
+            {
+                "name": "@overlap (default: 4)"
+            },
+            {
+                "name": "@wintype (default: 'hann')"
+            },
+            {
+                "name": "@ampunit (default: 0)"
+            },
+            {
+                "name": "@antimeunit (default: 1)"
+            },
+            {
+                "name": "@angleunit (default: 0)"
+            },
+            {
+                "name": "@frequnit (default: 0)"
+            },
+            {
+                "name": "@timeunit (default: 0)"
+            },
+            {
+                "name": "@downmix (default: 1)"
+            }
+        ]
+    }
+]
