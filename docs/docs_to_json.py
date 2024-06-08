@@ -17,7 +17,7 @@ formatted_tree = []
 # for each function category (generators, utils, processors, etc)
 for function_category in raw_tree:
     functions = function_category[1:]
-    
+
     # for each function in current category
     for function in functions:
         func_name = function[0]
@@ -28,8 +28,9 @@ for function_category in raw_tree:
             func_prop_value = function_property[1:]
             if func_prop_key == "description:":
                 if type(func_prop_value) == list:
-                    func_prop_value = " ".join([str(x) for x in func_prop_value])
-                
+                    func_prop_value = " ".join(
+                        [str(x) for x in func_prop_value])
+
                 # remove backslashes added by bell when description includes parens
                 func_descr = func_prop_value.replace("\\", "")
 
@@ -53,9 +54,12 @@ for function_category in raw_tree:
                                     arg_default = " ".join(
                                         [str(x) for x in arg_default])
                         argname = arg[0].split(" ")[0]
+                        arg_item = {
+                            "name": argname[1:]
+                        }
                         if arg_default is not None:
-                            argname = f'{argname} (default: {arg_default})'
-                        func_args.append({"name": argname})
+                            arg_item["default"] = None if arg_default == 'null' else arg_default
+                        func_args.append(arg_item)
         formatted_tree.append({
             "name": func_name,
             "description": func_descr,
