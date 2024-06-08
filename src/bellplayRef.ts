@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import bellplay from "./bellplay.json";
 
 const bellplayRefLookup: any = {};
+const bellplayRefDict: any = {};
 
 const bellplayRefCompletions = bellplay.map((x) => {
   let description = `\`\`\`c\n${x.name}()\n\`\`\`\n`;
@@ -15,7 +16,8 @@ const bellplayRefCompletions = bellplay.map((x) => {
   const docs: any = new vscode.MarkdownString(description);
   item.documentation = docs;
   bellplayRefLookup[x.name] = item;
+  bellplayRefDict[x.name] = x;
   return item;
 });
 
-export { bellplayRefCompletions, bellplayRefLookup };
+export { bellplayRefCompletions, bellplayRefLookup, bellplayRefDict };
