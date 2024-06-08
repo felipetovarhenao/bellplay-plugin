@@ -2,7 +2,7 @@
   "name": "bellplay-plugin",
   "displayName": "bellplay~ plugin",
   "description": "bellplay~ specific syntax support for the bell programming language in Visual Studio Code.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "icon": "./images/logo.png",
   "publisher": "tovarhenao",
   "repository": {
