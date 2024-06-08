@@ -40,7 +40,7 @@ export function activate(context: vscode.ExtensionContext) {
           const result = bellplayRefDict[token];
           return result.args.map((arg: any) => {
             const argname = arg.name.split(" ")[0].slice(1);
-            const item = new vscode.CompletionItem(argname, vscode.CompletionItemKind.Keyword);
+            const item = new vscode.CompletionItem(`@${argname}`, vscode.CompletionItemKind.Keyword);
             item.insertText = `${argname} `;
             return item;
           });
