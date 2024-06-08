@@ -4,7 +4,9 @@
 
 ## Description 
 
-`bellplay~`-specific syntax support for the `bell` programming language in Visual Studio Code.
+This extension provides additional syntax support for the `bellplay~` framework in `bell`. 
+
+As such, it's also recommended to install the [bell syntax](https://marketplace.visualstudio.com/items?itemName=tovarhenao.bell-syntax) extension.
 
 ## License
 
