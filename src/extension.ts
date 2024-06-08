@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { bellplayRefCompletions, bellplayRefLookup, bellplayRefDict } from "./bellplayRef";
+import { bellplayRefCompletions, bellplayRefLookup } from "./bellplayRef";
 
 export function activate(context: vscode.ExtensionContext) {
   const bellplayHoverProvider = vscode.languages.registerHoverProvider("bell", {
@@ -11,7 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
         return undefined;
       }
       return {
-        contents: [result.documentation],
+        contents: [result.completion.documentation],
       };
     },
   });
@@ -46,13 +46,11 @@ export function activate(context: vscode.ExtensionContext) {
 
         if (match && match[0]) {
           const token = match[0].split("").reverse().join("");
-          const result = bellplayRefDict[token];
-          return result.args.map((arg: any) => {
-            const argname = arg.name.split(" ")[0].slice(1);
-            const item = new vscode.CompletionItem(`${argname}`, vscode.CompletionItemKind.Field);
-            item.insertText = `${argname} `;
-            return item;
-          });
+          const result = bellplayRefLookup[token];
+          if (!result) {
+            return undefined;
+          }
+          return result.args;
         }
         return undefined;
       },
