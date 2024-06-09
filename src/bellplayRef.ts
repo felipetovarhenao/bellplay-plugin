@@ -3,6 +3,10 @@ import bellplay from "./bellplay.json";
 
 const bellplayRefLookup: any = {};
 
+function replaceHashtagWords(input: string): string {
+  return input.replace(/#(\w+)/g, "`$1`");
+}
+
 const bellplayRefCompletions = bellplay.map((x) => {
   let description = `\`\`\`c\n${x.name}()\n\`\`\`\n`;
 
@@ -42,7 +46,8 @@ const bellplayRefCompletions = bellplay.map((x) => {
       argCompletions.push(argCompletion);
     });
   }
-  description += `\n${x.description}\n\n`;
+
+  description += `\n${replaceHashtagWords(x.description)}\n\n`;
   const item = new vscode.CompletionItem(x.name, vscode.CompletionItemKind.Function);
   item.insertText = new vscode.SnippetString(`${x.name}(\${1})`);
   item.detail = "bellplay~ function";
