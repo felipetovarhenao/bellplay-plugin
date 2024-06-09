@@ -41,6 +41,15 @@ export function activate(context: vscode.ExtensionContext) {
     {
       provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
         const linePrefix = document.lineAt(position).text.slice(0, position.character);
+        
+        // we only want to show completions if @ is preceded by spaces or alpha + parens
+        const cleanAttrPattern = /(?<=(\w+\(|\s+))@$/;
+        const isCleanAttr = cleanAttrPattern.test(linePrefix);
+
+        // stop early
+        if (!isCleanAttr) {
+          return;
+        }
 
         /* 
         we use regex pattern for a reversed function, so as to catch the most recent function.
