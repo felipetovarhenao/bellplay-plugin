@@ -9,7 +9,7 @@ const bellplayRefCompletions = bellplay.map((x) => {
   const argCompletions: vscode.CompletionItem[] = [];
   if (x.args.length > 0) {
     description += `\nArguments:\n`;
-    x.args.forEach((arg: any) => {
+    x.args.forEach((arg: any, index: number) => {
       // argument as a list item, prepended with @ when not variadic
       let argname = `\n\t- ${arg.name === "<...>" ? arg.name : `@${arg.name}`}`;
 
@@ -32,6 +32,7 @@ const bellplayRefCompletions = bellplay.map((x) => {
       const argCompletion = new vscode.CompletionItem(`@${arg.name}`, vscode.CompletionItemKind.Field);
       argCompletion.insertText = new vscode.SnippetString(`${arg.name} `);
       argCompletion.filterText = arg.name;
+      argCompletion.sortText = `${index}`;
 
       if (defaultValue != undefined) {
         argCompletion.label += ` ${defaultValue}`;
