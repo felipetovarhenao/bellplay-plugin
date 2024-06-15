@@ -12,6 +12,9 @@
   "engines": {
     "vscode": "^1.87.0"
   },
+  "extensionDependencies": [
+    "tovarhenao.bell-syntax"
+  ],
   "activationEvents": [
     "onLanguage:bell"
   ],
