@@ -2,7 +2,8 @@ import json
 from tree_parser import TreeParser
 import os
 
-file = "./bellplay_docs.txt"
+THIS_DIR = os.path.dirname(__file__)
+file = os.path.join(THIS_DIR, "bellplay_docs.txt")
 path = os.path.abspath(file)
 
 if not os.path.exists(path):
@@ -13,9 +14,11 @@ if not os.path.exists(path):
 parser = TreeParser(path)
 raw_tree = parser.parse()
 formatted_tree = []
+version = raw_tree[0][1]
+reference = raw_tree[1][1:]
 
 # for each function category (generators, utils, processors, etc)
-for function_category in raw_tree:
+for function_category in reference:
     functions = function_category[1:]
 
     # for each function in current category
@@ -66,5 +69,12 @@ for function_category in raw_tree:
             "args": func_args
         })
 formatted_tree.sort(key=lambda x: x["name"])
-with open("../src/bellplay.json", "w") as f:
-    json.dump(formatted_tree, f, indent=4)
+docs = {
+    "version": version,
+    "reference": formatted_tree
+}
+output_path = os.path.abspath(os.path.join(THIS_DIR, "../src/bellplay.json"))
+with open(output_path, "w") as f:
+    json.dump(docs, f, indent=4)
+
+print("JSON documentation ready:", output_path)

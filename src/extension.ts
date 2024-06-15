@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { bellplayRefCompletions, bellplayRefLookup } from "./bellplayRef";
+import bellplay from "./bellplay.json";
 
 export function activate(context: vscode.ExtensionContext) {
   const bellplayHoverProvider = vscode.languages.registerHoverProvider("bell", {
@@ -10,8 +11,10 @@ export function activate(context: vscode.ExtensionContext) {
       if (!result) {
         return undefined;
       }
+      const docs = new vscode.MarkdownString(result.completion.documentation.value);
+      docs.appendMarkdown(`_bellplay~ (${bellplay.version})_`);
       return {
-        contents: [result.completion.documentation],
+        contents: [docs],
       };
     },
   });
@@ -41,7 +44,7 @@ export function activate(context: vscode.ExtensionContext) {
     {
       provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
         const linePrefix = document.lineAt(position).text.slice(0, position.character);
-        
+
         // we only want to show completions if @ is preceded by spaces or alpha + parens
         const cleanAttrPattern = /(?<=(\w+\(|\s+))@$/;
         const isCleanAttr = cleanAttrPattern.test(linePrefix);
@@ -59,7 +62,6 @@ export function activate(context: vscode.ExtensionContext) {
 
         // reverse line prefix and apply regex
         const match = linePrefix.split("").reverse().join("").match(regex);
-
 
         if (match && match[0]) {
           // if matched, reverse back

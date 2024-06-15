@@ -1,1 +1,4 @@
-write(BP_REF, "./bellplay_docs.txt")
+$data = ["version" BP_VERSION] ["reference" BP_REF];
+write(
+    @data $data @path "./bellplay_docs.txt"
+)

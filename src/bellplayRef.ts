@@ -7,7 +7,7 @@ function replaceHashtagWords(input: string): string {
   return input.replace(/#(\w+)/g, "`$1`");
 }
 
-const bellplayRefCompletions = bellplay.map((x) => {
+const bellplayRefCompletions = bellplay.reference.map((x) => {
   let description = `\`\`\`c\n${x.name}()\n\`\`\`\n`;
 
   const argCompletions: vscode.CompletionItem[] = [];
@@ -50,8 +50,8 @@ const bellplayRefCompletions = bellplay.map((x) => {
   description += `\n${replaceHashtagWords(x.description)}\n\n`;
   const item = new vscode.CompletionItem(x.name, vscode.CompletionItemKind.Function);
   item.insertText = new vscode.SnippetString(`${x.name}(\${1})`);
-  item.detail = "bellplay~ function";
-  const docs: any = new vscode.MarkdownString(description);
+  item.detail = `bellplay~ function (${bellplay.version})`;
+  const docs: vscode.MarkdownString = new vscode.MarkdownString(description);
   item.documentation = docs;
   bellplayRefLookup[x.name] = {
     completion: item,
