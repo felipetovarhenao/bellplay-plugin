@@ -7,3 +7,4 @@ src/bellplay.json
 **/*.js
 **/*.js.map
 **/.DS_Store
+!.eslintrc.js
