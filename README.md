@@ -4,7 +4,7 @@
 
 ## Description 
 
-This extension provides additional `bell` syntax support, by offering intellisense features for all functions in the [`bellplay~`](https://github.com/felipetovarhenao/bellplay) framework for algorithmic audio.
+A Visual Studio Code extension that provides intellisense features for all functions in the [`bellplay~`](https://github.com/felipetovarhenao/bellplay) framework for algorithmic audio.
 
 As such, it's also recommended to install the [bell syntax](https://marketplace.visualstudio.com/items?itemName=tovarhenao.bell-syntax) extension.
 
