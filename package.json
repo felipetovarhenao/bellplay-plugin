@@ -2,7 +2,7 @@
   "name": "bellplay-plugin",
   "displayName": "bellplay~ plugin",
   "description": "Extended syntax support plugin for the bellplay~ framework in bell.",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "icon": "./images/logo.png",
   "publisher": "tovarhenao",
   "repository": {
