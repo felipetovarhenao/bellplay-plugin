@@ -46,6 +46,8 @@ for function_category in reference:
                     subargs = args_category[1:]
                     for arg in subargs:
                         arg_default = None
+                        arg_type = None
+                        arg_desc = None
                         for arg_prop in arg[1:]:
                             if arg_prop[0] == "default:":
                                 arg_default = arg_prop[1:]
@@ -56,9 +58,17 @@ for function_category in reference:
                                 else:
                                     arg_default = " ".join(
                                         [str(x) for x in arg_default])
+                            elif arg_prop[0] == "description:":
+                                if len(arg_prop) > 1:
+                                    arg_descr = arg_prop[1]
+                            elif arg_prop[0] == "type:":
+                                if len(arg_prop) > 1:
+                                    arg_type = arg_prop[1]
                         argname = arg[0].split(" ")[0]
                         arg_item = {
-                            "name": argname[1:]
+                            "name": argname[1:],
+                            "description": arg_descr,
+                            "type": arg_type,
                         }
                         if arg_default is not None:
                             arg_item["default"] = None if arg_default == 'null' else arg_default
