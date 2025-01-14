@@ -7,27 +7,6 @@ import sendOscMessage from "./sendOscMessage";
 import * as path from "path";
 
 export function activate(context: vscode.ExtensionContext) {
-  const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-  statusBarItem.text = "$(play) Run bellplay~ script";
-  statusBarItem.command = "extension.runInBellplay";
-  context.subscriptions.push(statusBarItem);
-
-  vscode.workspace.onDidOpenTextDocument((document) => {
-    if (document.languageId === "bell") {
-      statusBarItem.show();
-    } else {
-      statusBarItem.hide();
-    }
-  });
-
-  vscode.window.onDidChangeActiveTextEditor((editor) => {
-    if (editor?.document.languageId === "bell") {
-      statusBarItem.show();
-    } else {
-      statusBarItem.hide();
-    }
-  });
-
   const runBellplayCodeCommand = vscode.commands.registerCommand("extension.runInBellplay", async () => {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {

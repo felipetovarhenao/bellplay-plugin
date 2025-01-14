@@ -19,9 +19,18 @@
     "commands": [
       {
         "command": "extension.runInBellplay",
-        "title": "Run in bellplay~"
+        "title": "Run bellplay~ script",
+        "icon": "./images/run-script-icon.svg"
       }
-    ]
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "extension.runInBellplay",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "activationEvents": [
     "onLanguage:bell"
