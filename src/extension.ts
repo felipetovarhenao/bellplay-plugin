@@ -1,8 +1,69 @@
 import * as vscode from "vscode";
 import { bellplayRefCompletions, bellplayRefLookup } from "./bellplayRef";
 import bellplay from "./bellplay.json";
+import launchBellplay from "./launchBellplay";
+import isProcessRunning from "./isProcessRunning";
+import sendOscMessage from "./sendOscMessage";
+import * as path from "path";
 
 export function activate(context: vscode.ExtensionContext) {
+  const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+  statusBarItem.text = "$(play) Run bellplay~ script";
+  statusBarItem.command = "extension.runInBellplay";
+  context.subscriptions.push(statusBarItem);
+
+  vscode.workspace.onDidOpenTextDocument((document) => {
+    if (document.languageId === "bell") {
+      statusBarItem.show();
+    } else {
+      statusBarItem.hide();
+    }
+  });
+
+  vscode.window.onDidChangeActiveTextEditor((editor) => {
+    if (editor?.document.languageId === "bell") {
+      statusBarItem.show();
+    } else {
+      statusBarItem.hide();
+    }
+  });
+
+  const runBellplayCodeCommand = vscode.commands.registerCommand("extension.runInBellplay", async () => {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+      vscode.window.showErrorMessage("No active editor found.");
+      return;
+    }
+
+    const document = editor.document;
+    if (document.languageId !== "bell") {
+      vscode.window.showErrorMessage("The active file is not a .bell file.");
+      return;
+    }
+
+    const filePath = document.fileName;
+
+    try {
+      const isRunning = await isProcessRunning("bellplay~");
+      // const isRunning = false;
+      if (!isRunning) {
+        vscode.window.showInformationMessage(`$(play) Launching bellplay~...`);
+        const launched = launchBellplay();
+        if (!launched) {
+          vscode.window.showErrorMessage("Failed to launch bellplay~. Please open it manually and try again.");
+          return;
+        } else {
+          // Give some time for the process to start
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+        }
+      }
+      vscode.window.showInformationMessage(`Running ${path.basename(filePath)} script in bellplay~.`);
+      sendOscMessage(filePath);
+    } catch (err) {
+      vscode.window.showErrorMessage(`Failed to send file to bellplay~: ${(err as any).message}`);
+    }
+  });
+
   const bellplayHoverProvider = vscode.languages.registerHoverProvider("bell", {
     provideHover(document: vscode.TextDocument, position: vscode.Position) {
       const range = document.getWordRangeAtPosition(position);
@@ -89,5 +150,5 @@ export function activate(context: vscode.ExtensionContext) {
     "@"
   );
 
-  context.subscriptions.push(bellplayCompletionProvider, bellplayHoverProvider, attrCompletionProvider);
+  context.subscriptions.push(runBellplayCodeCommand, bellplayCompletionProvider, bellplayHoverProvider, attrCompletionProvider);
 }

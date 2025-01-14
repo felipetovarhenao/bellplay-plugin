@@ -15,6 +15,14 @@
   "extensionDependencies": [
     "tovarhenao.bell-syntax"
   ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.runInBellplay",
+        "title": "Run in bellplay~"
+      }
+    ]
+  },
   "activationEvents": [
     "onLanguage:bell"
   ],
@@ -35,5 +43,9 @@
     "@typescript-eslint/parser": "^6.7.0",
     "eslint": "^8.26.0",
     "typescript": "^5.4.2"
+  },
+  "dependencies": {
+    "@types/node-osc": "^6.0.3",
+    "node-osc": "^9.1.4"
   }
 }
