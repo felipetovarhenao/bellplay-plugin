@@ -26,7 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
       const isRunning = await isProcessRunning("bellplay~");
       // const isRunning = false;
       if (!isRunning) {
-        vscode.window.showInformationMessage(`$(play) Launching bellplay~...`);
+        vscode.window.showInformationMessage(`Launching bellplay~...`);
         const launched = launchBellplay();
         if (!launched) {
           vscode.window.showErrorMessage("Failed to launch bellplay~. Please open it manually and try again.");
