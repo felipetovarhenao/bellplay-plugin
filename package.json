@@ -27,7 +27,8 @@
       "editor/title": [
         {
           "command": "extension.runInBellplay",
-          "group": "navigation"
+          "group": "navigation",
+          "when": "resourceLangId == bell"
         }
       ]
     }
