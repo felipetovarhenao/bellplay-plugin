@@ -9,9 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- New UI script runner feature. Launches _bellplay~_ if needed and loads script via OSC.
+
 ### Fixed
 
 ### Changed
+
+- Code organization: Re-organized disposables/provider code as imports to keep `extensions.ts` more readable.
 
 ### Removed
 
@@ -52,5 +56,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update docs to `bellplay~ v0.2.3-beta`.
 
 ### Removed
-
-
