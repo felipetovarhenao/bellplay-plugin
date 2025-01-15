@@ -3,7 +3,7 @@ import * as cp from "child_process";
 import * as fs from "fs";
 import * as path from "path";
 
-export default function launchBellplay(): boolean {
+export default async function launchBellplay(): Promise<boolean> {
   const platform = process.platform;
   const defaultPath = platform === "win32" ? "C:\\Program Files\\bellplay~\\bellplay.exe" : "/Applications/bellplay~.app";
 
@@ -26,14 +26,8 @@ export default function launchBellplay(): boolean {
       return false;
     }
 
-    // Launch the application
-    const child = cp.spawn(platform === "win32" ? "start" : "open", [bellplayPath], {
-      shell: true,
-      detached: true,
-      stdio: "ignore",
-    });
-    child.unref();
-    return true;
+    // Launch the application and wait for it to open
+    return await launchApplication(bellplayPath, platform);
   } catch (error: any) {
     vscode.window.showErrorMessage(`Failed to launch bellplay~: ${error.message}`);
     return false;
@@ -55,4 +49,23 @@ function isExecutableFile(filePath: string, platform: string): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * Launches the application and resolves when the application has been opened or rejects if it fails to open.
+ */
+function launchApplication(filePath: string, platform: string): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    const command = platform === "win32" ? filePath : "open";
+    const args = platform === "darwin" ? [filePath] : [];
+
+    cp.execFile(command, args, (error) => {
+      if (error) {
+        vscode.window.showErrorMessage(`Failed to open application: ${error.message}`);
+        reject(false);
+      } else {
+        resolve(true);
+      }
+    });
+  });
 }

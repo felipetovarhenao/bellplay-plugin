@@ -27,13 +27,13 @@ export function activate(context: vscode.ExtensionContext) {
       // const isRunning = false;
       if (!isRunning) {
         vscode.window.showInformationMessage(`Launching bellplay~...`);
-        const launched = launchBellplay();
+        const launched = await launchBellplay();
         if (!launched) {
           vscode.window.showErrorMessage("Failed to launch bellplay~. Please open it manually and try again.");
           return;
         } else {
           // Give some time for the process to start
-          await new Promise((resolve) => setTimeout(resolve, 5000));
+          await new Promise((resolve) => setTimeout(resolve, 2500));
         }
       }
       vscode.window.showInformationMessage(`Running ${path.basename(filePath)} script in bellplay~.`);
