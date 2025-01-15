@@ -31,6 +31,17 @@
           "when": "resourceLangId == bell"
         }
       ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "bellplay~ Configuration",
+      "properties": {
+        "bellplay.defaultPath": {
+          "type": "string",
+          "default": "",
+          "description": "Absolute path to the bellplay~ application. Leave empty to use the default path."
+        }
+      }
     }
   },
   "activationEvents": [
