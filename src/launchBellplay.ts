@@ -17,19 +17,19 @@ export default async function launchBellplay(): Promise<boolean> {
   try {
     // Validate the path
     if (!fs.existsSync(bellplayPath)) {
-      vscode.window.showErrorMessage(`The path "${bellplayPath}" does not exist.`);
+      vscode.window.showErrorMessage(`❌ The path "${bellplayPath}" does not exist.`);
       return false;
     }
 
     if (!isExecutableFile(bellplayPath, platform)) {
-      vscode.window.showErrorMessage(`The path "${bellplayPath}" is not a valid application.`);
+      vscode.window.showErrorMessage(`❌ The path "${bellplayPath}" is not a valid application.`);
       return false;
     }
 
     // Launch the application and wait for it to open
     return await launchApplication(bellplayPath, platform);
   } catch (error: any) {
-    vscode.window.showErrorMessage(`Failed to launch bellplay~: ${error.message}`);
+    vscode.window.showErrorMessage(`❌ Failed to launch bellplay~: ${error.message}`);
     return false;
   }
 }
@@ -61,7 +61,7 @@ function launchApplication(filePath: string, platform: string): Promise<boolean>
 
     cp.execFile(command, args, (error) => {
       if (error) {
-        vscode.window.showErrorMessage(`Failed to open application: ${error.message}`);
+        vscode.window.showErrorMessage(`❌ Failed to open application: ${error.message}`);
         reject(false);
       } else {
         resolve(true);
