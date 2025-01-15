@@ -2,11 +2,9 @@
 
 <img height="90px" src="./images/logo.png"/>
 
-## Description 
+## Description
 
-A Visual Studio Code extension that provides intellisense features for all functions in the [`bellplay~`](https://github.com/felipetovarhenao/bellplay) framework for algorithmic audio.
-
-As such, it's also recommended to install the [bell syntax](https://marketplace.visualstudio.com/items?itemName=tovarhenao.bell-syntax) extension.
+A Visual Studio Code extension that provides additional features for working with [`bellplay~`](https://github.com/felipetovarhenao/bellplay) framework for algorithmic audio. In particular, it provides intellisense (i.e., autocomplete and pop-up reference windows) for `bellplay~` functions, and a script runner functionality to load `bellplay~` scripts from VSCode via OSC.
 
 ## License
 
