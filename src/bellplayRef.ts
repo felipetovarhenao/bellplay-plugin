@@ -8,25 +8,42 @@ function replaceHashtagWords(input: string): string {
 }
 
 const bellplayRefCompletions = bellplay.reference.map((x) => {
-  let description = `\`\`\`c\n${x.name}()\n\`\`\`\n`;
-
+  let description = `\`\`\`bell\n${x.name}(`;
+  let argDocs = "\n**Arguments**:\n";
   const argCompletions: vscode.CompletionItem[] = [];
   if (x.args.length > 0) {
-    description += `\nArguments:\n`;
+    // description += `\nArguments:\n`;
+    description += "\n";
     x.args.forEach((arg: any, index: number) => {
       // argument as a list item, prepended with @ when not variadic
-      let argname = `\n\t- ${arg.name === "<...>" ? arg.name : `@${arg.name}`}`;
+      let argname = `\t${arg.name === "<...>" ? arg.name : `@${arg.name}`}`;
+      let argDoc = `\n- \`@${arg.name}\``;
 
       let defaultValue = undefined;
+
+      argDoc += `: ${replaceHashtagWords(arg.description)}`;
 
       // append default value, if any
       if (arg.default != undefined || arg.default === null) {
         defaultValue = arg.default === null ? "null" : arg.default;
-        argname += ` ${defaultValue}`;
+        argDoc += arg.default ? ` (_default_: \`${arg.default}\`)` : "";
       }
+      if (arg.options) {
+        arg.options.forEach((opt: any) => {
+          let optDoc = "\n\t- ";
+          optDoc += `\`${opt.value}\``;
+          if (opt.description) {
+            optDoc += `: ${opt.description}`;
+          }
+          argDoc += optDoc;
+        });
+      }
+      argDocs += argDoc;
+
+      argname += ` ${defaultValue || "null"}`;
 
       // concat to description
-      description += argname;
+      description += `${argname}\n`;
 
       // stop early if arg is variadic
       if (arg.name === "<...>") {
@@ -46,8 +63,9 @@ const bellplayRefCompletions = bellplay.reference.map((x) => {
       argCompletions.push(argCompletion);
     });
   }
-
+  description += ")\n```\n\n";
   description += `\n${replaceHashtagWords(x.description)}\n\n`;
+  description += `${argDocs}\n\n`;
   const item = new vscode.CompletionItem(x.name, vscode.CompletionItemKind.Function);
   item.insertText = new vscode.SnippetString(`${x.name}(\${1})`);
   item.detail = `bellplay~ function (${bellplay.version})`;

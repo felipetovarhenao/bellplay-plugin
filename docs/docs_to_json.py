@@ -48,6 +48,8 @@ for function_category in reference:
                         arg_default = None
                         arg_type = None
                         arg_desc = None
+                        arg_options = None
+
                         for arg_prop in arg[1:]:
                             if arg_prop[0] == "default:":
                                 arg_default = arg_prop[1:]
@@ -64,12 +66,27 @@ for function_category in reference:
                             elif arg_prop[0] == "type:":
                                 if len(arg_prop) > 1:
                                     arg_type = arg_prop[1]
+                            elif arg_prop[0] == "options:":
+                                raw_options = arg_prop[1:]
+                                arg_options = []
+                                for option in raw_options:
+                                    if option[0].endswith(':'):
+                                        arg_options.append({
+                                            "value": option[0][:-1],
+                                            "description": " ".join(option[1:])
+                                        })
+                                    else:
+                                        arg_options.append(
+                                            {"value": option[0]})
+
                         argname = arg[0].split(" ")[0]
                         arg_item = {
                             "name": argname[1:],
                             "description": arg_descr,
                             "type": arg_type,
                         }
+                        if arg_options:
+                            arg_item["options"] = arg_options
                         if arg_default is not None:
                             arg_item["default"] = None if arg_default == 'null' else arg_default
                         func_args.append(arg_item)
