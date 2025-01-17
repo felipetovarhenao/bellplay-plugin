@@ -90,11 +90,15 @@ for function_category in reference:
                         if arg_default is not None:
                             arg_item["default"] = None if arg_default == 'null' else arg_default
                         func_args.append(arg_item)
+        if func_descr.startswith("`"):
+            func_descr = func_descr[1:]
         formatted_tree.append({
             "name": func_name,
             "description": func_descr,
             "args": func_args
         })
+
+
 formatted_tree.sort(key=lambda x: x["name"])
 docs = {
     "version": version,
