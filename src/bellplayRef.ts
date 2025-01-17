@@ -3,8 +3,8 @@ import bellplay from "./bellplay.json";
 
 const bellplayRefLookup: any = {};
 
-function replaceHashtagWords(input: string): string {
-  return input.replace(/#(\w+)/g, "`$1`");
+function cleanDocString(input: string): string {
+  return input.replace(/#(\w+)/g, "`$1`").replace(/(@\w+)/g, "`$1`");
 }
 
 const bellplayRefCompletions = bellplay.reference.map((x) => {
@@ -12,7 +12,6 @@ const bellplayRefCompletions = bellplay.reference.map((x) => {
   let argDocs = "\n**Arguments**:\n";
   const argCompletions: vscode.CompletionItem[] = [];
   if (x.args.length > 0) {
-    // description += `\nArguments:\n`;
     description += "\n";
     x.args.forEach((arg: any, index: number) => {
       // argument as a list item, prepended with @ when not variadic
@@ -21,7 +20,7 @@ const bellplayRefCompletions = bellplay.reference.map((x) => {
 
       let defaultValue = undefined;
 
-      argDoc += `: ${replaceHashtagWords(arg.description)}`;
+      argDoc += `: ${cleanDocString(arg.description)}`;
 
       // append default value, if any
       if (arg.default != undefined || arg.default === null) {
@@ -64,7 +63,7 @@ const bellplayRefCompletions = bellplay.reference.map((x) => {
     });
   }
   description += ")\n```\n\n";
-  description += `\n${replaceHashtagWords(x.description)}\n\n`;
+  description += `\n${cleanDocString(x.description)}\n\n`;
   description += `${argDocs}\n\n`;
   const item = new vscode.CompletionItem(x.name, vscode.CompletionItemKind.Function);
   item.insertText = new vscode.SnippetString(`${x.name}(\${1})`);
