@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Fixed
+
+### Changed
+
+### Removed
+
+## [0.0.9]
+
+### Added
+
 - New UI script runner feature. Launches _bellplay~_ if needed and loads script via OSC.
 - GUI: currently loaded script tab now displays emoji.
 - Pop-up docs: Add support for argument description, including those with options.
