@@ -4,12 +4,15 @@ import bellplay from "./bellplay.json";
 const bellplayRefLookup: any = {};
 
 function cleanDocString(input: string): string {
-  return input.replace(/#(\w+)/g, "`$1`").replace(/(@\w+)/g, "`$1`");
+  return input
+    .replace(/#(\w+)/g, "`$1`")
+    .replace(/(@\w+)/g, "`$1`")
+    .replace(/\b(null)\b/g, "`$1`");
 }
 
 const bellplayRefCompletions = bellplay.reference.map((x) => {
   let description = `\`\`\`bell\n${x.name}(`;
-  let argDocs = "\n**Arguments**:\n";
+  let argDocs = x.args.length > 0 ? "\n**Arguments**:\n" : "\n";
   const argCompletions: vscode.CompletionItem[] = [];
   if (x.args.length > 0) {
     description += "\n";
@@ -27,6 +30,12 @@ const bellplayRefCompletions = bellplay.reference.map((x) => {
         defaultValue = arg.default === null ? "null" : arg.default;
         argDoc += arg.default ? ` (_default_: \`${arg.default}\`)` : "";
       }
+      if (!argDoc.endsWith(".")) {
+        argDoc += ".";
+      }
+      if (arg.default === undefined) {
+        argDoc += " (_required_).";
+      }
       if (arg.options) {
         arg.options.forEach((opt: any) => {
           let optDoc = "\n\t- ";
@@ -37,10 +46,10 @@ const bellplayRefCompletions = bellplay.reference.map((x) => {
           argDoc += optDoc;
         });
       }
-      argDocs += argDoc;
 
       argname += ` ${defaultValue || "null"}`;
 
+      argDocs += argDoc;
       // concat to description
       description += `${argname}\n`;
 

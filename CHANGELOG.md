@@ -11,7 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Docs: Hide `Arguments` header for argument-less functions.
+
 ### Changed
+
+- Docs: Improve formatting.
 
 ### Removed
 
