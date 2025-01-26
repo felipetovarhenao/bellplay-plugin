@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Docs: Now displays _resulting keys_ info in hover doc hints.
+
 ### Fixed
 
 - Docs: Hide `Arguments` header for argument-less functions.

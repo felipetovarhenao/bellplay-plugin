@@ -1,6 +1,7 @@
 import json
 from tree_parser import TreeParser
 import os
+import re
 
 THIS_DIR = os.path.dirname(__file__)
 file = os.path.join(THIS_DIR, "bellplay_docs.txt")
@@ -26,6 +27,7 @@ for function_category in reference:
         func_name = function[0]
         func_descr = None
         func_args = []
+        func_outkeys = None
         for function_property in function[1:]:
             func_prop_key = function_property[0]
             func_prop_value = function_property[1:]
@@ -38,6 +40,13 @@ for function_category in reference:
                 func_descr = func_prop_value.replace("\\", "")
 
             # parse arguments
+            elif func_prop_key == "resulting buffer keys:":
+                func_outkeys = []
+                regex = re.compile(r'\'?(\w+)\'?')
+                for x in func_prop_value:
+                    outkey = regex.match(x[0]).group(1)
+                    func_outkeys.append(outkey)
+
             elif func_prop_key == "arguments:":
                 arguments = func_prop_value
                 if arguments[0] == "none":
@@ -92,11 +101,14 @@ for function_category in reference:
                         func_args.append(arg_item)
         if func_descr.startswith("`"):
             func_descr = func_descr[1:]
-        formatted_tree.append({
+        doc_item = {
             "name": func_name,
             "description": func_descr,
             "args": func_args
-        })
+        }
+        if func_outkeys:
+            doc_item["buffer_keys"] = func_outkeys
+        formatted_tree.append(doc_item)
 
 
 formatted_tree.sort(key=lambda x: x["name"])
