@@ -12,14 +12,14 @@ function cleanDocString(input: string): string {
 
 const bellplayRefCompletions = bellplay.reference.map((x) => {
   let description = `\`\`\`bell\n${x.name}(`;
-  let argDocs = x.args.length > 0 ? "\n**Arguments**:\n" : "\n";
+  let argDocs = x.args.length > 0 ? "\n---\n**Arguments**:\n" : "\n";
   const argCompletions: vscode.CompletionItem[] = [];
   if (x.args.length > 0) {
     description += "\n";
     x.args.forEach((arg: any, index: number) => {
       // argument as a list item, prepended with @ when not variadic
       let argname = `\t${arg.name === "<...>" ? arg.name : `@${arg.name}`}`;
-      let argDoc = `\n- \`@${arg.name}\``;
+      let argDoc = `\n- \`@${arg.name}\` [ ***${arg.type}*** ]`;
 
       let defaultValue = undefined;
 
@@ -74,7 +74,7 @@ const bellplayRefCompletions = bellplay.reference.map((x) => {
   description += ")\n```\n\n";
   description += `\n${cleanDocString(x.description)}\n\n`;
   if (x.buffer_keys) {
-    description += `**Resulting keys**\n\n${x.buffer_keys.map((x) => `- \`'${x}'\``).join("\n")}\n\n`;
+    description += `\n---\n**Resulting keys**\n\n${x.buffer_keys.map((x) => `- \`'${x}'\``).join("\n")}\n\n`;
   }
   description += `${argDocs}\n\n`;
   const item = new vscode.CompletionItem(x.name, vscode.CompletionItemKind.Function);
