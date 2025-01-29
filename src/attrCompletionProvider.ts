@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { bellplayRefLookup } from "./bellplayRef";
+import findUnclosedParens from "./findFunctionName";
 
 const attrCompletionProvider = vscode.languages.registerCompletionItemProvider(
   "bell",
@@ -16,24 +17,16 @@ const attrCompletionProvider = vscode.languages.registerCompletionItemProvider(
         return;
       }
 
-      /* 
-        we use regex pattern for a reversed function, so as to catch the most recent function.
-        this might cause some issues but in general works well
-        */
-      const regex = /(?<=\()\w+\.?/;
+      const code = document.getText(new vscode.Range(new vscode.Position(0, 0), position));
+      let token = findUnclosedParens(code, code.length);
 
-      // reverse line prefix and apply regex
-      const match = linePrefix.split("").reverse().join("").match(regex);
-
-      if (match && match[0]) {
+      if (token) {
         // if matched, reverse back
-        let token = match[0].split("").reverse().join("");
-        let isDotted = false;
+        let isDotted = token.startsWith(".");
 
         // check if function is using dotted syntax and remove dot
-        if (token.startsWith(".")) {
+        if (isDotted) {
           token = token.slice(1);
-          isDotted = true;
         }
 
         // check if it exists

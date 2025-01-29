@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Docs: Hide `Arguments` header for argument-less functions.
+- Improve accuracy when matching named attribute to function name.
 
 ### Changed
 
