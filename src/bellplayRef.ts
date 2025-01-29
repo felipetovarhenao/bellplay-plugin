@@ -65,7 +65,9 @@ const bellplayRefCompletions = bellplay.reference.map((x) => {
 
       if (defaultValue != undefined) {
         argCompletion.label += ` ${defaultValue}`;
-        argCompletion.insertText.appendVariable("1", `${defaultValue}`);
+        arg.options && arg.options.length > 0
+          ? argCompletion.insertText.appendChoice(arg.options.map((opt: any) => `${opt.value}`))
+          : argCompletion.insertText.appendVariable("1", `${defaultValue}`);
       }
 
       argCompletions.push(argCompletion);
