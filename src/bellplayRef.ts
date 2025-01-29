@@ -26,9 +26,9 @@ const bellplayRefCompletions = bellplay.reference.map((x) => {
       argDoc += `: ${cleanDocString(arg.description)}`;
 
       // append default value, if any
-      if (arg.default != undefined || arg.default === null) {
+      if (arg.default !== undefined || arg.default === null) {
         defaultValue = arg.default === null ? "null" : arg.default;
-        argDoc += arg.default ? ` (_default_: \`${arg.default}\`)` : "";
+        argDoc += arg.default !== undefined ? ` (_default_: \`${arg.default}\`)` : "";
       }
       if (!argDoc.endsWith(".")) {
         argDoc += ".";
@@ -47,7 +47,7 @@ const bellplayRefCompletions = bellplay.reference.map((x) => {
         });
       }
 
-      argname += ` ${defaultValue || "null"}`;
+      argname += ` ${defaultValue === undefined ? "null" : defaultValue}`;
 
       argDocs += argDoc;
       // concat to description
