@@ -28,6 +28,7 @@ for function_category in reference:
         func_descr = None
         func_args = []
         func_outkeys = None
+        func_output = None
         for function_property in function[1:]:
             func_prop_key = function_property[0]
             func_prop_value = function_property[1:]
@@ -46,6 +47,14 @@ for function_category in reference:
                 for x in func_prop_value:
                     outkey = regex.match(x[0]).group(1)
                     func_outkeys.append(outkey)
+            elif func_prop_key == 'output:':
+                if func_prop_value[0] is not None:
+                    descr = func_prop_value[0][1]
+                    out_type = func_prop_value[1][1]
+                    func_output = {
+                        "description": descr,
+                        "type": out_type,
+                    }
 
             elif func_prop_key == "arguments:":
                 arguments = func_prop_value
@@ -104,7 +113,8 @@ for function_category in reference:
         doc_item = {
             "name": func_name,
             "description": func_descr,
-            "args": func_args
+            "args": func_args,
+            "output": func_output
         }
         if func_outkeys:
             doc_item["buffer_keys"] = func_outkeys
