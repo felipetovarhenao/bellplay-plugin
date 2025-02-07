@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Add output in docs.
+- Add output in hover docs.
 
 ### Changed
 

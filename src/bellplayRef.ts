@@ -79,6 +79,9 @@ const bellplayRefCompletions = bellplay.reference.map((x) => {
     description += `\n---\n**Resulting keys**\n\n${x.buffer_keys.map((x) => `- \`'${x}'\``).join("\n")}\n\n`;
   }
   description += `${argDocs}\n\n`;
+  const out = x.output ? `${x.output.description} [ ***${x.output.type}*** ]` : "`null`";
+  description += `${`\n---\n**Output**\n\n${out}`}\n\n`;
+
   const item = new vscode.CompletionItem(x.name, vscode.CompletionItemKind.Function);
   item.insertText = new vscode.SnippetString(`${x.name}(\${1})`);
   item.detail = `bellplay~ function (${bellplay.version})`;
