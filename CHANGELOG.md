@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- New bellplay~ listener feature, which mirrors bellplay~'s console.
+
 ### Fixed
 
 - Add output in hover docs.

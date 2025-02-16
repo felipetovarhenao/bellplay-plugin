@@ -5,6 +5,7 @@ import * as path from "path";
 import { Server } from "node-osc";
 import launchBellplay from "./launchBellplay";
 import decorationProvider from "./decorationProvider";
+import { startOSCListener } from "./oscListener";
 
 const runBellplayCodeCommand = vscode.commands.registerCommand("extension.runInBellplay", async () => {
   const editor = vscode.window.activeTextEditor;
@@ -30,6 +31,7 @@ const runBellplayCodeCommand = vscode.commands.registerCommand("extension.runInB
   try {
     const isRunning = await isProcessRunning("bellplay~");
     if (isRunning) {
+      startOSCListener();
       runScript();
     } else {
       vscode.window.showInformationMessage(`🚀 Launching bellplay~...`);
@@ -45,6 +47,7 @@ const runBellplayCodeCommand = vscode.commands.registerCommand("extension.runInB
 
         oscServer.on("message", (msg: any) => {
           if (msg[0] === "/ready") {
+            startOSCListener();
             runScript();
             oscServer.close(); // Close the server after receiving the readiness signal
           }
