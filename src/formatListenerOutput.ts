@@ -10,7 +10,7 @@ const ITALICS = "\x1b[3m";
 export default function formatListenerOutput(strings: string[]): string {
   if (strings.length === 0) return "";
   // Color the header (first string) in orange.
-  const header = `${ITALICS}${ORANGE}${strings[0]}${RESET}`;
+  const header = strings[0] === "" ? "" : `${ITALICS}${ORANGE}${strings[0]}${RESET} • `;
   // Join the remaining strings.
   let content = prettyPrint(strings.slice(1).join(" "));
 
@@ -23,5 +23,5 @@ export default function formatListenerOutput(strings: string[]): string {
     }
   });
 
-  return `${header} • ${content}`;
+  return `${header}${content}`;
 }
