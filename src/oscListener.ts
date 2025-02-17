@@ -15,6 +15,7 @@ const startTerminal = () => {
       open: bellplayListener.open,
       close: bellplayListener.close,
     },
+    iconPath: new vscode.ThemeIcon("bell"),
   });
   terminal.show();
 };
