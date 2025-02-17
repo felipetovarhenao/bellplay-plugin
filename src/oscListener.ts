@@ -7,6 +7,12 @@ export let oscServer: Server | null = null;
 const bellplayListener = new BellplayListener();
 let terminal: null | vscode.Terminal = null;
 
+vscode.window.onDidCloseTerminal((closedTerminal: vscode.Terminal) => {
+  if (closedTerminal == terminal) {
+    terminal = null;
+  }
+});
+
 const startTerminal = () => {
   terminal = vscode.window.createTerminal({
     name: "bellplay~ listener",
