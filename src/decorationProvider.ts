@@ -18,7 +18,6 @@ class ActiveScriptDecorationProvider implements vscode.FileDecorationProvider {
       return {
         badge: "⚡",
         tooltip: "This file is currently loaded in bellplay~",
-        color: new vscode.ThemeColor("list.focusForeground"),
       };
     }
     return undefined;
