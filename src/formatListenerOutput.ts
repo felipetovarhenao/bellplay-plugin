@@ -8,7 +8,8 @@ const RESET = "\x1b[0m";
 const ITALICS = "\x1b[3m";
 const RED = "\x1b[31m";
 const GREEN = "\x1b[92m";
-const BLUE = "\x1b[38;2;65;105;225m"; // RGB for royal blue
+const BLUE = "\x1b[38;2;65;105;225m";
+const GRAY = "\x1b[38;5;241m";
 
 enum MessageType {
   MESSAGE,
@@ -23,7 +24,7 @@ export default function formatListenerOutput(strings: string[]): string {
   const typeIndex: number = Number(strings[0]);
   const type = [MessageType.MESSAGE, MessageType.ERROR, MessageType.WARNING, MessageType.BUG][Number.isNaN(typeIndex) ? 0 : typeIndex];
   // Color the header (first string) in orange.
-  const header = strings[1] === "" ? "" : `${ITALICS}${ORANGE}${strings[1]}${RESET} • `;
+  const header = strings[1] === "" ? "" : `${ITALICS}${ORANGE}${strings[1]}${RESET} ${GRAY}•${RESET} `;
   // Join the remaining strings.
   let content = strings.slice(2).join(" ");
   switch (type) {
