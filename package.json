@@ -20,7 +20,7 @@
       {
         "command": "extension.runInBellplay",
         "title": "Run bellplay~ script",
-        "icon": "./images/run-script-icon.svg"
+        "icon": "$(run)"
       }
     ],
     "menus": {
