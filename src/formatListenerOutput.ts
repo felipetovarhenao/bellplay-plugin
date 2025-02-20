@@ -10,6 +10,7 @@ const RED = "\x1b[31m";
 const GREEN = "\x1b[92m";
 const BLUE = "\x1b[38;2;65;105;225m";
 const GRAY = "\x1b[38;5;241m";
+const PURPLE = "\x1b[35m";
 
 enum MessageType {
   MESSAGE,
@@ -39,9 +40,11 @@ export default function formatListenerOutput(strings: string[]): string {
       break;
     default:
       // Replace square brackets and numbers with their colored versions.
-      content = prettyPrint(content).replace(/(\[|\]|\b(-?\d+(\.\d+)?)\b)/g, (match) => {
+      content = prettyPrint(content).replace(/(\[|\]|\bnull\b|\b(-?\d+(\.\d+)?)\b)/g, (match) => {
         if (match === "[" || match === "]") {
           return `${YELLOW}${match}${RESET}`;
+        } else if (match === "null") {
+          return `${PURPLE}${match}${RESET}`;
         } else {
           return `${CYAN}${match}${RESET}`;
         }
