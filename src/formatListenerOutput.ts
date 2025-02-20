@@ -40,7 +40,8 @@ export default function formatListenerOutput(strings: string[]): string {
       break;
     default:
       // Replace square brackets and numbers with their colored versions.
-      content = prettyPrint(content).replace(/(\[|\]|\bnull\b|\b(-?\d+(\.\d+)?)\b)/g, (match) => {
+      // content = prettyPrint(content);
+      content = content.replace(/(\[|\]|\bnull\b|\b(-?\d+(\.\d+)?)\b)/g, (match) => {
         if (match === "[" || match === "]") {
           return `${YELLOW}${match}${RESET}`;
         } else if (match === "null") {
