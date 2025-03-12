@@ -35,8 +35,9 @@ export function startOSCListener(): void {
     oscServer = new Server(12346, "127.0.0.1");
     oscServer.on("message", (msg: any) => {
       const path = msg.shift();
-      if (path.startsWith("console/")) {
-        bellplayListener.log(formatListenerOutput(msg));
+      if (path == "console/") {
+        const entry = formatListenerOutput(msg[0]);
+        bellplayListener.log(entry);
       }
     });
   }

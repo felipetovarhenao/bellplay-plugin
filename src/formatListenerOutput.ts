@@ -19,7 +19,9 @@ enum MessageType {
   BUG,
 }
 
-export default function formatListenerOutput(strings: string[]): string {
+export default function formatListenerOutput(string: string): string {
+  const strings = string.split(" ");
+
   if (strings.length < 3) return "";
   // get message type
   const typeIndex: number = Number(strings[0]);
