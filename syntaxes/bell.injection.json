@@ -21,7 +21,7 @@
             "name": "markup.deleted"
         },
         "devwarning": {
-            "match": "(?<=\\b)BP_FN_devWARNING(?=\\b)",
+            "match": "(?<=\\b)BP_FN_WARNING(?=\\b)",
             "name": "markup.changed"
         },
         "devfunction": {
