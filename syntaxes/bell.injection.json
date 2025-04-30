@@ -1,0 +1,36 @@
+{
+    "scopeName": "dev.injection",
+    "injectionSelector": "L:source.bell",
+    "patterns": [
+        {
+            "include": "#deverror"
+        },
+        {
+            "include": "#devwarning"
+        },
+        {
+            "include": "#devfunction"
+        },
+        {
+            "include": "#devglobal"
+        }
+    ],
+    "repository": {
+        "deverror": {
+            "match": "(?<=\\b)BP_FN_ERROR(?=\\b)",
+            "name": "markup.deleted"
+        },
+        "devwarning": {
+            "match": "(?<=\\b)BP_FN_devWARNING(?=\\b)",
+            "name": "markup.changed"
+        },
+        "devfunction": {
+            "match": "(?<=\\b)BP_(FN|MAXOBJ)_([A-Z0-9_])?[A-Z0-9_]+(?=\\b)",
+            "name": "support.class"
+        },
+        "devglobal": {
+            "match": "(?<=\\b)BP_([A-Z0-9_])?[A-Z0-9_]+(?=\\b)",
+            "name": "variable.parameter"
+        }
+    }
+}

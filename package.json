@@ -16,6 +16,15 @@
     "tovarhenao.bell-syntax"
   ],
   "contributes": {
+    "grammars": [
+      {
+        "path": "./syntaxes/bell.injection.json",
+        "scopeName": "dev.injection",
+        "injectTo": [
+          "source.bell"
+        ]
+      }
+    ],
     "commands": [
       {
         "command": "extension.runInBellplay",
