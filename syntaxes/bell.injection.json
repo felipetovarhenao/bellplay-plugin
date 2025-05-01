@@ -9,6 +9,9 @@
             "include": "#devwarning"
         },
         {
+            "include": "#devref"
+        },
+        {
             "include": "#devfunction"
         },
         {
@@ -24,12 +27,16 @@
             "match": "(?<=\\b)BP_FN_WARNING(?=\\b)",
             "name": "markup.changed"
         },
+        "devref": {
+            "match": "(?<=\\b)BP_REF(([A-Z0-9_])*[A-Z0-9])?(?=\\b)",
+            "name": "entity.other.inherited-class"
+        },
         "devfunction": {
-            "match": "(?<=\\b)BP_(FN|MAXOBJ)_([A-Z0-9_])?[A-Z0-9_]+(?=\\b)",
+            "match": "(?<=\\b)BP_(FN|MAXOBJ)_([A-Z0-9_])*[A-Z0-9](?=\\b)",
             "name": "support.class"
         },
         "devglobal": {
-            "match": "(?<=\\b)BP_([A-Z0-9_])?[A-Z0-9_]+(?=\\b)",
+            "match": "(?<=\\b)BP_([A-Z0-9_])*[A-Z0-9](?=\\b)",
             "name": "variable.parameter"
         }
     }
