@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Fixed
+
+### Changed
+
+### Removed
+
+## [0.0.12] - 04-05-2025
+
+### Added
+
 - Add syntax injection for naming conventions in code base.
 
 ### Fixed
