@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Better pattern matching in terminal for token highlighting.
+
 ### Removed
 
 ## [0.0.12] - 04-05-2025

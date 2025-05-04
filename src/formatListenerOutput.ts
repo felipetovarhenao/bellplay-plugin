@@ -19,17 +19,35 @@ enum MessageType {
   BUG,
 }
 
+// Pattern matchers and color map
+const PATTERN_MATCHERS = [
+  { name: "fraction", regex: /(?<![A-Za-z_0-9$#@)\]])[+\-]?\d+\/\d+/ },
+  { name: "decimal", regex: /(?<![A-Za-z_0-9$#@)\]])((?<!\d\.)[+\-])?(\d+(\.(?!\.))\d*|\d*((?<!\.\.)\.)\d+|\d+)([eE][+\-]?\d+)?(?!\w)/ },
+  { name: "pitch", regex: /((?<!\$|#)(?<=\b)[A-Ga-g][#bxdq\^v]*[0-9]+(?:[+-]\d+\/\d+t)?(?=\b))/ },
+  { name: "null", regex: /\bnull\b/ },
+  { name: "bracket", regex: /\[|\]/ },
+  { name: "buffer", regex: /\bu\d{9}\b/ },
+];
+
+const COLOR_MAP: Record<string, string> = {
+  fraction: CYAN,
+  decimal: CYAN,
+  pitch: BLUE,
+  null: PURPLE,
+  bracket: YELLOW,
+  buffer: GREEN,
+};
+
 export default function formatListenerOutput(string: string): string {
   const strings = string.split(" ");
-
   if (strings.length < 3) return "";
-  // get message type
+
   const typeIndex: number = Number(strings[0]);
   const type = [MessageType.MESSAGE, MessageType.ERROR, MessageType.WARNING, MessageType.BUG][Number.isNaN(typeIndex) ? 0 : typeIndex];
-  // Color the header (first string) in orange.
+
   const header = strings[1] === "" ? "" : `${ITALICS}${ORANGE}${strings[1]}${RESET} ${GRAY}•${RESET} `;
-  // Join the remaining strings.
   let content = strings.slice(2).join(" ");
+
   switch (type) {
     case MessageType.ERROR:
       content = `${RED}${content}${RESET}`;
@@ -41,16 +59,17 @@ export default function formatListenerOutput(string: string): string {
       content = `${BLUE}${content}${RESET}`;
       break;
     default:
-      // Replace square brackets and numbers with their colored versions.
-      // content = prettyPrint(content);
-      content = content.replace(/(\[|\]|\bnull\b|\b(-?\d+(\.\d+)?)\b)/g, (match) => {
-        if (match === "[" || match === "]") {
-          return `${YELLOW}${match}${RESET}`;
-        } else if (match === "null") {
-          return `${PURPLE}${match}${RESET}`;
-        } else {
-          return `${CYAN}${match}${RESET}`;
+      // Single-pass replacement using combined regex
+      const combinedRegex = new RegExp(PATTERN_MATCHERS.map((p) => `(?<${p.name}>${p.regex.source})`).join("|"), "g");
+
+      content = content.replace(combinedRegex, (match, ...args) => {
+        const groups = args[args.length - 1];
+        for (const key in groups) {
+          if (groups[key]) {
+            return `${COLOR_MAP[key]}${groups[key]}${RESET}`;
+          }
         }
+        return match;
       });
       break;
   }
