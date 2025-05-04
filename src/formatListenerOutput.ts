@@ -1,16 +1,16 @@
 import prettyPrint from "./prettyPrint";
 
 // ANSI color codes
-const ORANGE = "\x1b[38;5;208m"; // Extended ANSI code for orange
-const YELLOW = "\x1b[33m";
-const CYAN = "\x1b[36m";
+const ORANGE = "\x1b[38;2;240;169;131m"; // #f0a983
+const YELLOW = "\x1b[38;2;223;192;131m"; // #dfc083
+const CYAN = "\x1b[38;2;129;207;223m"; // #81cfdf
 const RESET = "\x1b[0m";
 const ITALICS = "\x1b[3m";
-const RED = "\x1b[31m";
-const GREEN = "\x1b[92m";
-const BLUE = "\x1b[38;2;65;105;225m";
+const RED = "\x1b[38;2;229;113;113m"; // #e57171
+const BLUE = "\x1b[38;2;121;191;245m"; // #79bff5
+const GREEN = "\x1b[38;2;167;220;139m"; // #a7dc8b
 const GRAY = "\x1b[38;5;241m";
-const PURPLE = "\x1b[35m";
+const PURPLE = "\x1b[38;2;158;142;238m"; // #9e8eee
 
 enum MessageType {
   MESSAGE,

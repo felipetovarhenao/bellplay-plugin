@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Use a pastel-style palette.
+
 ### Removed
 
 ## [0.0.11] - 29-04-2025
