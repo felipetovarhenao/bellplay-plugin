@@ -3,55 +3,18 @@ import bellplay from "./bellplay.json";
 
 const bellplayRefLookup: any = {};
 
-function cleanDocString(input: string): string {
-  return input
-    .replace(/#(\w+)/g, "`$1`")
-    .replace(/(@\w+)/g, "`$1`")
-    .replace(/\b(null)\b/g, "`$1`");
-}
-
 const bellplayRefCompletions = bellplay.reference.map((x) => {
-  let description = `\`\`\`bell\n${x.name}(`;
-  let argDocs = x.args.length > 0 ? "\n---\n**Arguments**:\n" : "\n";
+  // let description = `\`\`\`bell\n${x.name}(`;
+
   const argCompletions: vscode.CompletionItem[] = [];
   if (x.args.length > 0) {
-    description += "\n";
     x.args.forEach((arg: any, index: number) => {
-      // argument as a list item, prepended with @ when not variadic
-      let argname = `\t${arg.name === "<...>" ? arg.name : `@${arg.name}`}`;
-      let argDoc = `\n- \`@${arg.name}\` [ ***${arg.type}*** ]`;
-
       let defaultValue = undefined;
-
-      argDoc += `: ${cleanDocString(arg.description)}`;
 
       // append default value, if any
       if (arg.default !== undefined || arg.default === null) {
         defaultValue = arg.default === null ? "null" : arg.default;
-        argDoc += arg.default !== undefined ? ` (_default_: \`${arg.default}\`)` : "";
       }
-      if (!argDoc.endsWith(".")) {
-        argDoc += ".";
-      }
-      if (arg.default === undefined) {
-        argDoc += " (_required_).";
-      }
-      if (arg.options) {
-        arg.options.forEach((opt: any) => {
-          let optDoc = "\n\t- ";
-          optDoc += `\`${opt.value}\``;
-          if (opt.description) {
-            optDoc += `: ${opt.description}`;
-          }
-          argDoc += optDoc;
-        });
-      }
-
-      argname += ` ${defaultValue === undefined ? "null" : defaultValue}`;
-
-      argDocs += argDoc;
-      // concat to description
-      description += `${argname}\n`;
 
       // stop early if arg is variadic
       if (arg.name === "<...>") {
@@ -73,16 +36,11 @@ const bellplayRefCompletions = bellplay.reference.map((x) => {
       argCompletions.push(argCompletion);
     });
   }
-  description += ")\n```\n\n";
-  description += `\n${cleanDocString(x.description)}\n\n`;
-  description += `${argDocs}\n\n`;
-  const out = x.output ? `${x.output.description} [ ***${x.output.type}*** ]` : "`null`";
-  description += `${`\n---\n**Output**\n\n${out}`}\n\n`;
 
   const item = new vscode.CompletionItem(x.name, vscode.CompletionItemKind.Function);
   item.insertText = new vscode.SnippetString(`${x.name}(\${1})`);
   item.detail = `bellplay~ function (${bellplay.version})`;
-  const docs: vscode.MarkdownString = new vscode.MarkdownString(description);
+  const docs: vscode.MarkdownString = new vscode.MarkdownString(x.markdown);
   item.documentation = docs;
   bellplayRefLookup[x.name] = {
     completion: item,
