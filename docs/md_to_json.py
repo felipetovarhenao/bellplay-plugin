@@ -4,10 +4,13 @@ import re
 import yaml
 import json
 
+BASE_DIR = os.path.dirname(__file__)
+
 # Explicit configuration variables
 # Path to directory containing .md files
 markdown_directory = '/Users/felipetovarhenao/Documents/bellplay/website/docs/reference/'
-output_json_file = './bellplay_docs.json'  # Path for the resulting JSON file
+# Path for the resulting JSON file
+output_json_file = os.path.join(BASE_DIR, '../src/bellplay.json')
 
 
 def clean_admonitions(text):
@@ -65,31 +68,41 @@ def parse_markdown_file(file_path):
         r'^### Arguments\n([\s\S]*?)(?=^### |^---|\Z)', content, re.DOTALL | re.MULTILINE)
     if args_match:
         args_block = args_match.group(1)
-        # Each line of form: - `@name` [_**type**_] (optional info)
-        for line in args_block.splitlines():
-            line = line.strip()
+        current_arg = None
+        for raw_line in args_block.splitlines():
+            stripped = raw_line.strip()
+            # top‑level argument
             m = re.match(
-                r'- `@([^`]+)` \[_\*\*([^\*_]+)\*\*_\](?: \(([^)]*)\))?', line)
+                r'- `@([^`]+)` \[_\*\*([^\*_]+)\*\*_\](?: \(([^)]*)\))?', stripped)
             if m:
                 arg_name, arg_type, extras = m.groups()
-                required = extras is not None and 'required' in extras.lower()
-                # Find default in extras if mentioned
+                required = bool(extras and 'required' in extras.lower())
                 default = None
                 if extras:
                     dm = re.search(r'default_?: `([^`]+)`', extras)
                     if dm:
                         default = dm.group(1)
-                arguments.append({
+                # start a new arg, with empty options list
+                current_arg = {
                     'name': arg_name,
                     'type': arg_type,
                     'required': required,
-                    'default': default
-                })
+                    'default': default,
+                    'options': []
+                }
+                arguments.append(current_arg)
+            else:
+                # nested enum‑option line under the last argument
+                om = re.match(r'^\s*-\s*`?([^`]+)`?\s*:\s*(.+)', raw_line)
+                if om and current_arg is not None:
+                    value, desc = om.groups()
+                    current_arg['options'].append({
+                        'value': int(value) if value.isnumeric() else value,
+                        'description': desc.strip()
+                    })
+                # else: ignore any other lines
 
     # 6. Output section
-        # 6. Output section (parsed into type + description)
-    # 6. Output section (parsed into type + description)
-    # 6. Output section (parsed into name/description + type)
     output = None
     out_match = re.search(
         r'^### Output\s*\n([\s\S]*?)(?=^### |^---|\Z)',
@@ -147,7 +160,8 @@ def main():
 
     # Write the list of function definitions to JSON
     with open(output_json_file, 'w', encoding='utf-8') as outfile:
-        json.dump(parsed_functions, outfile, indent=2, ensure_ascii=False)
+        json.dump({'version': 'v0.0.1', 'reference': parsed_functions},
+                  outfile, indent=2, ensure_ascii=False)
 
 
 # Execute parsing when run as a script
