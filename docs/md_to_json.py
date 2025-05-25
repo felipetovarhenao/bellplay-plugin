@@ -13,6 +13,19 @@ markdown_directory = '/Users/felipetovarhenao/Documents/bellplay/website/docs/re
 output_json_file = os.path.join(BASE_DIR, '../src/bellplay.json')
 
 
+def clean_markdown(text: str) -> str:
+    # Remove YAML header at the top
+    text = re.sub(r'^---\s*\n.*?\n---\s*\n', '', text, flags=re.DOTALL)
+
+    # Remove admonition blocks
+    text = re.sub(r':::.*?\n.*?\n:::.*?\n?', '', text, flags=re.DOTALL)
+
+    # Remove title
+    text = re.sub(r'## `[^`]+`\s*\n', '', text, flags=re.DOTALL)
+
+    return text
+
+
 def clean_admonitions(text):
     """
     Convert :::type blocks into markdown blockquotes with bold labels.
@@ -142,16 +155,24 @@ def parse_markdown_file(file_path):
     if usage_match:
         usage = usage_match.group(1).strip()
 
+    docstring = clean_markdown(text)
+    if 'tags' in frontmatter:
+        docstring += f"""
+### See also
+
+{" ".join(f'`{t}`' for t in frontmatter['tags'])}
+
+"""
     # Aggregate into dict
     return {
         'name': name,
-        'signature': signature,
-        'description': clean_admonitions(description),
+        # 'signature': signature,
+        # 'description': clean_admonitions(description),
         'args': arguments,
-        'output': output,
-        'usage': usage,
-        'tags': frontmatter.get('tags', []),
-        "markdown": clean_admonitions(text),
+        # 'output': output,
+        # 'usage': usage,
+        # 'tags': frontmatter.get('tags', []),
+        "markdown": docstring,
     }
 
 
