@@ -74,14 +74,14 @@ def parse_markdown_file(file_path):
             # top‑level argument
             # top‑level argument: name, optional '?', type, description, extras
             m = re.match(
-                r'-\s+`@([^`\s]+)\s*(\?)?`\s+\[_\*\*([^\*_]+)\*\*_\]\s*:\s*(.*?)\s*(?:\(\s*([^)]*?)\s*\))?\s*(?:\.|$)',
+                r'-\s+`@([^`\s]+)`\s+\[_\*\*([^\*_]+)\*\*_\]\s*:\s*(.*?)\s*(?:\((.*)\))(?:\.|$)',
                 stripped
             )
             if m:
-                arg_name, optional_flag, arg_type, desc, extras = m.groups()
+                arg_name, arg_type, desc, extras = m.groups()
                 # determine required/default
-                required = bool(optional_flag or (
-                    extras and 'required' in extras.lower()))
+                required = bool(
+                    extras and 'required' in extras.lower())
                 default = None
                 if extras:
                     dm = re.search(r'default_?:\s*`([^`]+)`', extras)
