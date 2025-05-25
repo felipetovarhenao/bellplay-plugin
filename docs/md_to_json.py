@@ -11,8 +11,14 @@ BELLPLAY_REPO = '/Users/felipetovarhenao/Documents/bellplay/'
 # Explicit configuration variables
 # Path to directory containing .md files
 markdown_directory = os.path.join(BELLPLAY_REPO, 'website/docs/reference/')
+native_functions_path = os.path.join(
+    BELLPLAY_REPO, 'website/gen/native_functions.json')
 # Path for the resulting JSON file
 output_json_file = os.path.join(BASE_DIR, '../src/bellplay.json')
+
+with open(native_functions_path, 'r') as f:
+    native_functions = json.load(f)
+    native_functions_names = [fn['name'] for fn in native_functions]
 
 
 def get_version():
@@ -78,6 +84,9 @@ def parse_markdown_file(file_path):
     # 2. Function name from first level-2 heading with backticks
     name_match = re.search(r'## `([^`]+)`', content)
     name = name_match.group(1) if name_match else None
+
+    if name in native_functions_names:
+        return None
 
     # 3. Signature: code block after heading
     sig_match = re.search(r'```bell\n([\s\S]*?)```', content)
@@ -200,6 +209,8 @@ def main():
 
     for md_file in markdown_files:
         parsed = parse_markdown_file(md_file)
+        if not parsed:
+            continue
         parsed_functions.append(parsed)
 
     # Write the list of function definitions to JSON
