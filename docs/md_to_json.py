@@ -122,14 +122,16 @@ def parse_markdown_file(file_path):
         if bt:
             output_type = bt.group(1)
             # remove the brackets and content
+            out_block = re.sub(r":::\w+\n.*\n:::", "", out_block)
             name_desc = re.sub(r'\[[^\]]+\]', '',
-                               out_block).strip().strip(':').strip()
+                               out_block).strip()
+
         else:
             output_type = None
             name_desc = out_block
         # apply admonition cleanup on any description content
         output = {
-            'description': clean_admonitions(name_desc),
+            'description': name_desc,
             'type': output_type
         }
 
@@ -149,6 +151,7 @@ def parse_markdown_file(file_path):
         'output': output,
         'usage': usage,
         'tags': frontmatter.get('tags', []),
+        "markdown": clean_admonitions(text),
     }
 
 
