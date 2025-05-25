@@ -6,11 +6,24 @@ import json
 
 BASE_DIR = os.path.dirname(__file__)
 
+BELLPLAY_REPO = '/Users/felipetovarhenao/Documents/bellplay/'
+
 # Explicit configuration variables
 # Path to directory containing .md files
-markdown_directory = '/Users/felipetovarhenao/Documents/bellplay/website/docs/reference/'
+markdown_directory = os.path.join(BELLPLAY_REPO, 'website/docs/reference/')
 # Path for the resulting JSON file
 output_json_file = os.path.join(BASE_DIR, '../src/bellplay.json')
+
+
+def get_version():
+    bellplay_main = os.path.join(BELLPLAY_REPO, 'data/__bellplay__.bell')
+    with open(bellplay_main, 'r') as f:
+        script = f.read()
+    version = re.search(
+        r"^(?:BP_VERSION\s*=\s*)([^;]+)", script, re.DOTALL)
+    if not version:
+        raise LookupError("bellplay~ version not found")
+    return version.group(1).replace("\"", "").replace("'", "")
 
 
 def clean_markdown(text: str) -> str:
@@ -180,6 +193,7 @@ def main():
     """
     Parse all markdown files in the configured directory and write JSON output.
     """
+    version = get_version()
     pattern = os.path.join(markdown_directory, '**/*.md')
     markdown_files = glob.glob(pattern)
     parsed_functions = []
@@ -190,7 +204,7 @@ def main():
 
     # Write the list of function definitions to JSON
     with open(output_json_file, 'w', encoding='utf-8') as outfile:
-        json.dump({'version': 'v0.0.1', 'reference': parsed_functions},
+        json.dump({'version': version, 'reference': parsed_functions},
                   outfile, indent=2, ensure_ascii=False)
 
 
