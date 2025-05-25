@@ -75,9 +75,6 @@ const bellplayRefCompletions = bellplay.reference.map((x) => {
   }
   description += ")\n```\n\n";
   description += `\n${cleanDocString(x.description)}\n\n`;
-  if (x.buffer_keys) {
-    description += `\n---\n**Resulting keys**\n\n${x.buffer_keys.map((x) => `- \`'${x}'\``).join("\n")}\n\n`;
-  }
   description += `${argDocs}\n\n`;
   const out = x.output ? `${x.output.description} [ ***${x.output.type}*** ]` : "`null`";
   description += `${`\n---\n**Output**\n\n${out}`}\n\n`;

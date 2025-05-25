@@ -72,20 +72,26 @@ def parse_markdown_file(file_path):
         for raw_line in args_block.splitlines():
             stripped = raw_line.strip()
             # top‑level argument
+            # top‑level argument: name, optional '?', type, description, extras
             m = re.match(
-                r'- `@([^`]+)` \[_\*\*([^\*_]+)\*\*_\](?: \(([^)]*)\))?', stripped)
+                r'-\s+`@([^`\s]+)\s*(\?)?`\s+\[_\*\*([^\*_]+)\*\*_\]\s*:\s*(.*?)\s*(?:\(\s*([^)]*?)\s*\))?\s*(?:\.|$)',
+                stripped
+            )
             if m:
-                arg_name, arg_type, extras = m.groups()
-                required = bool(extras and 'required' in extras.lower())
+                arg_name, optional_flag, arg_type, desc, extras = m.groups()
+                # determine required/default
+                required = bool(optional_flag or (
+                    extras and 'required' in extras.lower()))
                 default = None
                 if extras:
-                    dm = re.search(r'default_?: `([^`]+)`', extras)
+                    dm = re.search(r'default_?:\s*`([^`]+)`', extras)
                     if dm:
                         default = dm.group(1)
-                # start a new arg, with empty options list
+                # record argument
                 current_arg = {
                     'name': arg_name,
                     'type': arg_type,
+                    'description': desc.strip(),
                     'required': required,
                     'default': default,
                     'options': []
@@ -123,7 +129,7 @@ def parse_markdown_file(file_path):
             name_desc = out_block
         # apply admonition cleanup on any description content
         output = {
-            'name': name_desc,
+            'description': clean_admonitions(name_desc),
             'type': output_type
         }
 
