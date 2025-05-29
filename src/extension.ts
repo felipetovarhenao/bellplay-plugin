@@ -5,8 +5,11 @@ import bellplayCompletionProvider from "./bellplayCompletionProvider";
 import attrCompletionProvider from "./attrCompletionProvider";
 import decorationProvider from "./decorationProvider";
 import { stopOSCListener } from "./oscListener";
+import { initializeUserDocStrings } from "./userLibraryDocStrings";
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
+  await initializeUserDocStrings();
+
   vscode.window.registerFileDecorationProvider(decorationProvider);
   context.subscriptions.push(runBellplayCodeCommand, bellplayCompletionProvider, bellplayHoverProvider, attrCompletionProvider);
 }

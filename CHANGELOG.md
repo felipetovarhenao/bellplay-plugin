@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Markdown-style Docstring support for global definitions in user library.
+
 ### Fixed
 
 ### Changed

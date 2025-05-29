@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { bellplayRefLookup } from "./bellplayRef";
 import bellplay from "./bellplay.json";
+import { getUserDocStringMap } from "./userLibraryDocStrings";
 
 const bellplayHoverProvider = vscode.languages.registerHoverProvider("bell", {
   provideHover(document: vscode.TextDocument, position: vscode.Position) {
@@ -8,7 +9,11 @@ const bellplayHoverProvider = vscode.languages.registerHoverProvider("bell", {
     const word = document.getText(range);
     const result = bellplayRefLookup[word];
     if (!result) {
-      return undefined;
+      const docstrings = getUserDocStringMap();
+      if (!docstrings) {
+        return undefined;
+      }
+      return docstrings[word];
     }
     const docs = new vscode.MarkdownString(result.completion.documentation.value);
     docs.appendMarkdown(`_bellplay~ (${bellplay.version})_`);
