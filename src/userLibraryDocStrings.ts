@@ -5,6 +5,18 @@ import * as vscode from "vscode";
 import getBellSyntaxAPI from "./getBellSyntaxAPI";
 
 let cachedDocStrings: Record<string, vscode.Hover> = {};
+let userLibraryCompletions: vscode.CompletionItem[] = [];
+
+function createCompletion(name: string, docstring?: string) {
+  const item = new vscode.CompletionItem(name, vscode.CompletionItemKind.Variable);
+  item.insertText = new vscode.SnippetString(`${name}(\${1})`);
+  if (docstring !== undefined) {
+    item.detail = `User-defined variable`;
+    const docs: vscode.MarkdownString = new vscode.MarkdownString(docstring);
+    item.documentation = docs;
+  }
+  return item;
+}
 
 function readConfigFile(): string | undefined {
   const homeDir = os.homedir();
@@ -67,10 +79,21 @@ async function buildSymbolDocMap(filePaths: string[]): Promise<Record<string, vs
     const document = await vscode.workspace.openTextDocument(filePath);
 
     for (const sym of symbols) {
-      const hover = api.findDocString(document, sym);
+      const hover: vscode.Hover = api.findDocString(document, sym);
+      let contents;
       if (hover) {
         symbolMap[sym] = hover;
+        if (hover.contents.length > 0) {
+          const markdown = hover.contents[0];
+          // Extract plain text from MarkdownString or string
+          if (typeof markdown === "string") {
+            contents = markdown;
+          } else if ("value" in markdown) {
+            contents = markdown.value;
+          }
+        }
       }
+      userLibraryCompletions.push(createCompletion(sym, contents));
     }
   }
 
@@ -92,4 +115,8 @@ export async function initializeUserDocStrings() {
 // Accessor to use after initialization
 export function getUserDocStringMap(): Record<string, vscode.Hover> {
   return cachedDocStrings;
+}
+
+export function getUserLibraryCompletions(): vscode.CompletionItem[] {
+  return userLibraryCompletions;
 }

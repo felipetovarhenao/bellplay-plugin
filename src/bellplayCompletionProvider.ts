@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { bellplayRefCompletions, bellplayRefLookup } from "./bellplayRef";
+import { getUserLibraryCompletions } from "./userLibraryDocStrings";
 
 const bellplayCompletionProvider = vscode.languages.registerCompletionItemProvider("bell", {
   provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
@@ -17,7 +18,7 @@ const bellplayCompletionProvider = vscode.languages.registerCompletionItemProvid
       return undefined;
     }
 
-    return [...bellplayRefCompletions];
+    return [...bellplayRefCompletions, ...getUserLibraryCompletions()];
   },
 });
 
