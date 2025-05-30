@@ -60,7 +60,7 @@ function extractSymbolNamesFromFile(filePath: string): string[] {
   if (!fs.existsSync(filePath)) return [];
   const content = fs.readFileSync(filePath, "utf-8");
 
-  const regex = /(?<=\)#\s*)([A-Za-z][A-Za-z0-9_]*[A-Za-z0-9]?)(?=\s*=[^=])/gm;
+  const regex = /(?<=[^#@$])([A-Za-z][A-Za-z0-9_]*[A-Za-z0-9]?)(?=\s*=[^=])/gm;
   const matches: string[] = [];
   let match;
   while ((match = regex.exec(content)) !== null) {
