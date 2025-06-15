@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Console route changed from `console/` to `/console` to match changes in lastest bellplay~ version.
 - Better pattern matching in terminal for token highlighting.
 
 ### Removed
