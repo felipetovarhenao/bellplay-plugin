@@ -22,7 +22,7 @@ with open(native_functions_path, 'r') as f:
 
 
 def get_version():
-    bellplay_main = os.path.join(BELLPLAY_REPO, 'data/__bellplay__.bell')
+    bellplay_main = os.path.join(BELLPLAY_REPO, 'code/__bellplay__.bell')
     with open(bellplay_main, 'r') as f:
         script = f.read()
     version = re.search(
