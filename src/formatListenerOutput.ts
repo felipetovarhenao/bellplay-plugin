@@ -45,7 +45,7 @@ export default function formatListenerOutput(string: string): string {
   const typeIndex: number = Number(strings[0]);
   const type = [MessageType.MESSAGE, MessageType.ERROR, MessageType.WARNING, MessageType.BUG][Number.isNaN(typeIndex) ? 0 : typeIndex];
 
-  const header = strings[1] === "" ? "" : `${ITALICS}${ORANGE}${strings[1]}${RESET} ${GRAY}•${RESET} `;
+  const header = strings[1] === "" ? "" : `${ITALICS}${ORANGE}${strings[1].replace("bach.eval", "")}${RESET} ${GRAY}•${RESET} `;
   let content = strings.slice(2).join(" ");
 
   switch (type) {
